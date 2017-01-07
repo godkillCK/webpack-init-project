@@ -1,6 +1,6 @@
-# demo2
+# vue-app
 
-> A webpack project
+> A Vue.js project
 
 ## Build Setup
 

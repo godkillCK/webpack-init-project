@@ -1,7 +1,7 @@
 {
-  "name": "demo2",
+  "name": "vue-app",
   "version": "1.0.0",
-  "description": "init vue project",
+  "description": "A Vue.js project",
   "author": "ck <ck@timevale.com>",
   "private": true,
   "scripts": {

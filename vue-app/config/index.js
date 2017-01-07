@@ -1,5 +1,5 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
-const path = require('path')
+var path = require('path')
 
 module.exports = {
   build: {
@@ -7,7 +7,6 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    // 可以修改为CDN
     assetsPublicPath: '/',
     productionSourceMap: true,
     // Gzip off by default as many popular static hosts such as
@@ -15,11 +14,11 @@ module.exports = {
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
     productionGzip: false,
-    productionGzipExtensions: ['js', 'css'],
+    productionGzipExtensions: ['js', 'css']
   },
   dev: {
     env: require('./dev.env'),
-    port: 8989,
+    port: 8080,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {},
@@ -28,6 +27,6 @@ module.exports = {
     // (https://github.com/webpack/css-loader#sourcemaps)
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
-    cssSourceMap: false,
-  },
+    cssSourceMap: false
+  }
 }
