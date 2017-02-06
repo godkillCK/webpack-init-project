@@ -1,5 +1,7 @@
 {
   "entry": "src/index.js",
+  //"publicPath": "", //可以配置cdn: http://cdn.example.com/assets/[hash]/
+  "outputPath": "./dist/[hash]",
   "disableCSSModules": false,
   "autoprefixer": null,
   "proxy": null,
