@@ -1,12 +1,21 @@
-{
-  "entry": "src/pages/*.js",
-  "autoprefixer": {
+const webpack = require('webpack');
+const pxtorem = require('postcss-pxtorem');
+
+export default {
+  entry: "src/pages/*.js",
+  autoprefixer: {
     "browsers": [
       "iOS >= 8", "Android >= 4"
     ]
   },
-  "multipage": true,
-  "env": {
+  extraPostCSSPlugins: [
+    pxtorem({
+      rootValue: 100,
+      propWhiteList: [],
+    }),
+  ],
+  multipage: true,
+  env: {
     "development": {
       "extraBabelPlugins": [
         "dva-hmr",
@@ -21,5 +30,5 @@
       ]
     }
   },
-  "theme": "./src/theme.js"
-}
+  theme: "./src/theme.js"
+};
