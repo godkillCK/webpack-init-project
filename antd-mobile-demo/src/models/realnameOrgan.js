@@ -25,10 +25,17 @@ export default {
       },
     ],
     organType: ['0'],
+    messageVisible: false,
+    message: '',
   },
   reducers: {
-    changeOrganType(state, { payload: organType }) {
+    changeOrganType(state, { payload }) {
+      const { organType } = payload;
       return { ...state, organType };
+    },
+    showMessage(state, { payload }) {
+      const { messageVisible, message } = payload;
+      return { ...state, messageVisible, message };
     },
   },
   effects: {},
