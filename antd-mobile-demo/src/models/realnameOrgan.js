@@ -25,6 +25,29 @@ export default {
       },
     ],
     organType: ['0'],
+    legalAreaList: [
+      {
+        value: '0',
+        label: '中国大陆',
+      },
+      {
+        value: '1',
+        label: '香港',
+      },
+      {
+        value: '2',
+        label: '澳门',
+      },
+      {
+        value: '3',
+        label: '台湾',
+      },
+      {
+        value: '4',
+        label: '外籍',
+      },
+    ],
+    legalArea: ['0'],
     messageVisible: false,
     message: '',
   },
@@ -32,6 +55,10 @@ export default {
     changeOrganType(state, { payload }) {
       const { organType } = payload;
       return { ...state, organType };
+    },
+    changeLegalArea(state, { payload }) {
+      const { legalArea } = payload;
+      return { ...state, legalArea };
     },
     showMessage(state, { payload }) {
       const { messageVisible, message } = payload;

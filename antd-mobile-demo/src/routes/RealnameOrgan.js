@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva/mobile';
-import { NavBar, Picker, List, InputItem, Switch, Stepper, Slider, Button, Modal, DatePicker, Flex, Checkbox } from 'antd-mobile';
+import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, Flex, Checkbox } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
@@ -10,7 +10,7 @@ import styles from './RealnameOrgan.css';
 const Item = List.Item;
 const zhNow = moment().locale('zh-cn').utcOffset(8);
 
-function RealnameOrgan({ dispatch, organTypeList, organType, form, messageVisible, message }) {
+function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, legalArea, form, messageVisible, message }) {
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
     // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
@@ -57,6 +57,14 @@ function RealnameOrgan({ dispatch, organTypeList, organType, form, messageVisibl
       },
     });
   };
+  const changeLegalArea = (value) => {
+    dispatch({
+      type: 'realnameOrgan/changeLegalArea',
+      payload: {
+        legalArea: value,
+      },
+    });
+  };
   return (
     <div>
       <NavBar
@@ -80,7 +88,7 @@ function RealnameOrgan({ dispatch, organTypeList, organType, form, messageVisibl
         </List>
         <List
           renderHeader={() => '企业信息'}
-          renderFooter={() => getFieldError('name') && getFieldError('name').join(',')}
+          // renderFooter={() => getFieldError('name') && getFieldError('name').join(',')}
         >
           <InputItem
             labelNumber={6}
@@ -165,13 +173,149 @@ function RealnameOrgan({ dispatch, organTypeList, organType, form, messageVisibl
               <Checkbox style={{ marginLeft: '0.3rem' }}>法人</Checkbox>
             </Flex.Item>
           </Flex>
-          <Item
-            extra={<Switch {...getFieldProps('1', { initialValue: true, valuePropName: 'checked' })} />}
-          >
-            确认信息
-          </Item>
         </List>
-        <Button className="btn" type="primary" onClick={onSubmit}>下一步</Button>
+        <List
+          renderHeader={() => '法人信息'}
+        >
+          <Picker
+            data={legalAreaList}
+            cols={1}
+            value={legalArea}
+            onChange={changeLegalArea}
+          >
+            <List.Item arrow="horizontal">法人归属地</List.Item>
+          </Picker>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('legalName', {
+              rules: [
+                { required: true, message: '请输入法人姓名' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('legalName')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('legalName').join('、'), e);
+            }}
+            placeholder="请输入法人姓名"
+          >
+            法人姓名
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('idCardIdNo', {
+              rules: [
+                { required: true, message: '请输入身份证号' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('idCardIdNo')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('idCardIdNo').join('、'), e);
+            }}
+            placeholder="请输入身份证号"
+          >
+            身份证号
+          </InputItem>
+        </List>
+        <List
+          renderHeader={() => '代理人信息'}
+        >
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('agentName', {
+              rules: [
+                { required: true, message: '请输入代理人姓名' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('agentName')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('agentName').join('、'), e);
+            }}
+            placeholder="请输入代理人姓名"
+          >
+            代理人姓名
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('agentIdNo', {
+              rules: [
+                { required: true, message: '请输入身份证号' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('agentIdNo')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('agentIdNo').join('、'), e);
+            }}
+            placeholder="请输入身份证号"
+          >
+            身份证号
+          </InputItem>
+          <DatePicker
+            mode="date"
+            title="选择日期"
+            extra="请选择"
+            {...getFieldProps('agentEndTime')}
+          >
+            <List.Item arrow="horizontal">身份证有效期</List.Item>
+          </DatePicker>
+        </List>
+        <List
+          renderHeader={() => '银行账户信息'}
+        >
+          <NoticeBar id="myNotice" type="info">e签宝将给此对公账户汇入一笔1元以下资金；若公司名和对公账户开户名不一致，资金将汇入失败</NoticeBar>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('bank', {
+              rules: [
+                { required: true, message: '请输入开户银行名称' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('bank')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('bank').join('、'), e);
+            }}
+            placeholder="请输入开户银行名称"
+          >
+            开户银行
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('subbranch', {
+              rules: [
+                { required: true, message: '请输入开户银行支行名称' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('subbranch')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('subbranch').join('、'), e);
+            }}
+            placeholder="请输入开户银行支行名称"
+          >
+            开户支行名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('bankNum', {
+              rules: [
+                { required: true, message: '请输入开户银行账号' },
+              ],
+            })}
+            clear
+            error={!!getFieldError('bankNum')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('bankNum').join('、'), e);
+            }}
+            placeholder="请输入开户银行账号"
+          >
+            开户银行账号
+          </InputItem>
+        </List>
+        <Button className="btn" style={{ marginTop: 30 }} type="primary" onClick={onSubmit}>下一步</Button>
       </form>
 
       <Modal
@@ -189,8 +333,8 @@ function RealnameOrgan({ dispatch, organTypeList, organType, form, messageVisibl
 }
 
 function mapStateToProps(state) {
-  const { organTypeList, organType, messageVisible, message } = state.realnameOrgan;
-  return { organTypeList, organType, messageVisible, message };
+  const { organTypeList, organType, legalAreaList, legalArea, messageVisible, message } = state.realnameOrgan;
+  return { organTypeList, organType, legalAreaList, legalArea, messageVisible, message };
 }
 
 export default connect(mapStateToProps)(createForm()(RealnameOrgan));

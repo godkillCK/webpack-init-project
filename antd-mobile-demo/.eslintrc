@@ -24,7 +24,8 @@
     "import/no-unresolved": [0],
     "require-yield": [1],
     "linebreak-style": [0],
-    "no-param-reassign": [0]
+    "no-param-reassign": [0],
+    "max-len": [0]
   },
   "parserOptions": {
     "ecmaFeatures": {
