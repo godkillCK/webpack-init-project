@@ -1,3 +1,4 @@
+import * as service from '../services/service';
 
 export default {
   namespace: 'realnameOrgan',
@@ -48,8 +49,11 @@ export default {
       },
     ],
     legalArea: ['0'],
+    userType: 1,
+    showAgent: 'block',
     messageVisible: false,
     message: '',
+    updateAccountInfoResponse: null,
   },
   reducers: {
     changeOrganType(state, { payload }) {
@@ -60,11 +64,34 @@ export default {
       const { legalArea } = payload;
       return { ...state, legalArea };
     },
+    changeUserType(state, { payload }) {
+      const { userType } = payload;
+      if (userType === 1) {
+        return { ...state, userType, showAgent: 'block' };
+      } else {
+        return { ...state, userType, showAgent: 'none' };
+      }
+    },
     showMessage(state, { payload }) {
       const { messageVisible, message } = payload;
       return { ...state, messageVisible, message };
     },
+    setUpdateAccountInfoResponse(state, { payload: response }) {
+      console.log('response1: ', response);
+      return { ...state, updateAccountInfoResponse: response };
+    },
   },
-  effects: {},
+  effects: {
+    *updateAccountInfo({ payload: values }, { call, put }) {
+      const { response } = yield call(service.updateAccountInfo, values);
+      console.log('response: ', response);
+      yield put({
+        type: 'setUpdateAccountInfoResponse',
+        payload: {
+          response,
+        },
+      });
+    },
+  },
   subscriptions: {},
 };

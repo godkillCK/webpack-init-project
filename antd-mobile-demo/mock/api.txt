@@ -1,0 +1,29 @@
+http://localhost:8080/ic/service/ic/account/login
+{name: "15200850767", authcode: "", password: "eabd8ce9404507aa8c22714d3f5eada9", loginType: 0, os: "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1"}
+
+http://localhost:8080/ic/service/ic/auth/apply
+{authcode: "", bankCardNum: "6214835714851787", bankReservedMobile: "15200850767", certId: "430181199002040335", name: "陈凯"}
+
+http://localhost:8080/ic/service/ic/auth/auth
+{code: "846861", serviceId: "a86b72c8-ea75-41e3-a28b-a957166d2431"}
+
+http://localhost:8080/ic/service/ic/account/updateSafeInfo
+{password: "96e79218965eb72c92a549dd5a330112", pwdRequest: "我爸爸的名字？", pwdAnswer: "aa", pwdRequest2: "我妈妈的名字？" pwdAnswer2: "aa",}
+
+
+
+project_id=1101563327
+equipId=095a9c902ebaf97033169f23fd7ccd70
+
+{"equipId":"095a9c902ebaf97033169f23fd7ccd70","token":"beeb8aec-513d-4202-a4d4-ad97f8283631","md5":"4b2f89af3dd2be950dd39d23a2daddd8","fields":"{\"bankNum\":\"123456\",\"bank\":\"test-test\",\"organize\":{\"name\":\"test12\",\"userType\":\"2\",\"regCode\":\"\",\"organType\":\"0\",\"organEndTime\":\"0\",\"organCode\":\"913301087458306077\",\"legalArea\":\"0\",\"legalName\":\"陈凯\",\"legalIdNo\":\"430181199002040335\",\"licenseType\":\"1\",\"address\":\"中国-北京市-北京市-test\"}}"}
+
+
+{"token":"2b0fc57a-8fdb-45a9-aafe-71ef0f422608","equipId":"32233f4f5d8bd3abf0fd9ee98f724c3b","md5":"c11a98c8fe7ea065f2f2996ad2b7cfcb","fields":"{\"bankNum\":\"123456\",\"bank\":\"test-test\",\"organize\":{\"name\":\"test1\",\"userType\":\"2\",\"regCode\":\"\",\"organType\":\"0\",\"organEndTime\":\"0\",\"organCode\":\"913301087458306077\",\"legalArea\":\"0\",\"legalName\":\"陈凯\",\"legalIdNo\":\"430181199002040335\",\"licenseType\":\"1\",\"address\":\"中国-北京市-北京市-test11\"}}"}
+
+"loginUrl" -> "http://121.41.118.95:80/tgoauth2/authorize!login"
+https://121.41.118.95:8443/openapi/rest/account/update
+http://121.41.118.95:8080/openapi/rest/account/update
+
+
+5c0b96c1-753c-485e-b369-de6b68318a99
+87d81e81e83729bf9ad09c4c1c9c6ff8

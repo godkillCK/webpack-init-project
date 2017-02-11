@@ -2,15 +2,16 @@ import React from 'react';
 import { connect } from 'dva/mobile';
 import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, Flex, Checkbox } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
+// import { moment } from 'moment';
+// import 'moment/locale/zh-cn';
 import district from '../models/district';
-import styles from './RealnameOrgan.css';
+import styles from './RealnameOrgan.less';
 
-const Item = List.Item;
-const zhNow = moment().locale('zh-cn').utcOffset(8);
+// const Item = List.Item;
+// const zhNow = moment().locale('zh-cn').utcOffset(8);
 
-function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, legalArea, form, messageVisible, message }) {
+function RealnameOrgan(props) {
+  const { dispatch, organTypeList, organType, legalAreaList, legalArea, userType, showAgent, form, messageVisible, message } = props;
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
     // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
@@ -34,11 +35,15 @@ function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, lega
   };
   const onSubmit = (e) => {
     form.validateFields({ force: true }, (error) => {
-      if (error) {
-        showMessage('校验失败', e);
-      } else {
+      // if (error) {
+      //   showMessage('校验失败', e);
+      // } else {
         // next
-      }
+      dispatch({
+        type: 'realnameOrgan/updateAccountInfo',
+        payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
+      });
+      // }
     });
   };
   const validateName = (rule, value, callback) => {
@@ -62,6 +67,14 @@ function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, lega
       type: 'realnameOrgan/changeLegalArea',
       payload: {
         legalArea: value,
+      },
+    });
+  };
+  const changeUserType = (e, value) => {
+    dispatch({
+      type: 'realnameOrgan/changeUserType',
+      payload: {
+        userType: value,
       },
     });
   };
@@ -166,11 +179,11 @@ function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, lega
           >
             组织机构代码
           </InputItem>
-          <Flex style={{ height: '0.9rem', paddingLeft: '0.3rem', paddingRight: '0.3rem' }}>
+          <Flex className={styles.form_flex}>
             <Flex.Item style={{ flex: 6 }}>填写人身份</Flex.Item>
             <Flex.Item style={{ flex: 12 }}>
-              <Checkbox defaultChecked>代理人</Checkbox>
-              <Checkbox style={{ marginLeft: '0.3rem' }}>法人</Checkbox>
+              <Checkbox onChange={(e) => { changeUserType(e, 1); }} checked={userType === 1}>代理人</Checkbox>
+              <Checkbox onChange={(e) => { changeUserType(e, 2); }} checked={userType === 2} style={{ marginLeft: '0.3rem' }}>法人</Checkbox>
             </Flex.Item>
           </Flex>
         </List>
@@ -220,6 +233,7 @@ function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, lega
         </List>
         <List
           renderHeader={() => '代理人信息'}
+          style={{ display: showAgent }}
         >
           <InputItem
             labelNumber={6}
@@ -265,7 +279,7 @@ function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, lega
         <List
           renderHeader={() => '银行账户信息'}
         >
-          <NoticeBar id="myNotice" type="info">e签宝将给此对公账户汇入一笔1元以下资金；若公司名和对公账户开户名不一致，资金将汇入失败</NoticeBar>
+          <NoticeBar className="my-notice-bar" type="info">e签宝将给此对公账户汇入一笔1元以下资金；若公司名和对公账户开户名不一致，资金将汇入失败</NoticeBar>
           <InputItem
             labelNumber={6}
             {...getFieldProps('bank', {
@@ -333,8 +347,9 @@ function RealnameOrgan({ dispatch, organTypeList, organType, legalAreaList, lega
 }
 
 function mapStateToProps(state) {
-  const { organTypeList, organType, legalAreaList, legalArea, messageVisible, message } = state.realnameOrgan;
-  return { organTypeList, organType, legalAreaList, legalArea, messageVisible, message };
+  return state.realnameOrgan;
+  // const { organTypeList, organType, legalAreaList, legalArea, userType, showAgent, messageVisible, message } = state.realnameOrgan;
+  // return { organTypeList, organType, legalAreaList, legalArea, userType, showAgent, messageVisible, message };
 }
 
 export default connect(mapStateToProps)(createForm()(RealnameOrgan));
