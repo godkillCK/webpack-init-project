@@ -1,9 +1,23 @@
 import request from '../utils/request';
 
 export async function updateAccountInfo(values) {
-  return request('http://localhost:8080/ic/service/ic/account/updateAccountInfo', {
+  return request('../service/ic/account/updateAccountInfo', {
     method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify(values),
+    credentials: 'same-origin',
+    body: values,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
+export async function updateAccountSafeInfo(values) {
+  return request('../service/ic/account/updateSafeInfo', {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: values,
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 }

@@ -1,4 +1,4 @@
-import * as service from '../services/service';
+import { updateAccountInfo } from '../services/service';
 
 export default {
   namespace: 'realnameOrgan',
@@ -76,19 +76,18 @@ export default {
       const { messageVisible, message } = payload;
       return { ...state, messageVisible, message };
     },
-    setUpdateAccountInfoResponse(state, { payload: response }) {
-      console.log('response1: ', response);
-      return { ...state, updateAccountInfoResponse: response };
+    setUpdateAccountInfoResponse(state, { payload: data }) {
+      return { ...state, updateAccountInfoResponse: data };
     },
   },
   effects: {
     *updateAccountInfo({ payload: values }, { call, put }) {
-      const { response } = yield call(service.updateAccountInfo, values);
-      console.log('response: ', response);
+      const { data } = yield call(updateAccountInfo, values);
+      console.log('data: ', data);
       yield put({
         type: 'setUpdateAccountInfoResponse',
         payload: {
-          response,
+          data,
         },
       });
     },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva/mobile';
-import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, Flex, Checkbox } from 'antd-mobile';
+import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, Flex, Checkbox, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
 // import { moment } from 'moment';
 // import 'moment/locale/zh-cn';
@@ -11,7 +11,7 @@ import styles from './RealnameOrgan.less';
 // const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 function RealnameOrgan(props) {
-  const { dispatch, organTypeList, organType, legalAreaList, legalArea, userType, showAgent, form, messageVisible, message } = props;
+  const { loading, dispatch, organTypeList, organType, legalAreaList, legalArea, userType, showAgent, form, messageVisible, message } = props;
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
     // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
@@ -34,17 +34,20 @@ function RealnameOrgan(props) {
     });
   };
   const onSubmit = (e) => {
-    form.validateFields({ force: true }, (error) => {
-      // if (error) {
-      //   showMessage('校验失败', e);
-      // } else {
-        // next
-      dispatch({
-        type: 'realnameOrgan/updateAccountInfo',
-        payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
-      });
-      // }
+    dispatch({
+      type: 'realnameOrgan/updateAccountInfo',
+      payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
     });
+    // form.validateFields({ force: true }, (error) => {
+    //   if (error) {
+    //     showMessage('校验失败', e);
+    //   } else {
+    //     dispatch({
+    //       type: 'realnameOrgan/updateAccountInfo',
+    //       payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
+    //     });
+    //   }
+    // });
   };
   const validateName = (rule, value, callback) => {
     if (/^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/.test(value)) {
@@ -342,14 +345,19 @@ function RealnameOrgan(props) {
       >
         {message}
       </Modal>
+
+      <ActivityIndicator
+        toast
+        color="white"
+        size="large"
+        animating={loading}
+      />
     </div>
   );
 }
 
 function mapStateToProps(state) {
-  return state.realnameOrgan;
-  // const { organTypeList, organType, legalAreaList, legalArea, userType, showAgent, messageVisible, message } = state.realnameOrgan;
-  // return { organTypeList, organType, legalAreaList, legalArea, userType, showAgent, messageVisible, message };
+  return { ...state.realnameOrgan, loading: state.loading.global };
 }
 
 export default connect(mapStateToProps)(createForm()(RealnameOrgan));
