@@ -5,13 +5,323 @@ import { createForm } from 'rc-form';
 // import { moment } from 'moment';
 // import 'moment/locale/zh-cn';
 import district from '../models/district';
-import styles from './RealnameOrgan.less';
+import styles from './mixins.less';
 
 // const Item = List.Item;
 // const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 function RealnameOrgan(props) {
-  const { loading, dispatch, organTypeList, organType, legalAreaList, legalArea, userType, showAgent, form, messageVisible, message } = props;
+  const { loading, dispatch, organTypeList, organType, legalAreaList, legalArea, userType, cardType, form, messageVisible, message } = props;
+  let organInfoList = null;
+  switch (organType[0]) {
+    case '0':
+      organInfoList = () => (
+        <div>
+          <Flex className={styles.form_flex_border}>
+            <Flex.Item style={{ flex: 6 }}>证件类型</Flex.Item>
+            <Flex.Item style={{ flex: 12 }}>
+              <Flex.Item>
+                <Checkbox onChange={(e) => { changeCardType(e, 0); }} checked={cardType === 0}>普通营业执照</Checkbox>
+              </Flex.Item>
+              <Flex.Item
+                className="my-flexbox-item"
+              >
+                <Checkbox onChange={(e) => { changeCardType(e, 1); }} checked={cardType === 1}>多证合一营业执照</Checkbox>
+              </Flex.Item>
+            </Flex.Item>
+          </Flex>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name', {
+              rules: [
+                { required: true, message: '请输入企业名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name').join('、'), e);
+            }}
+            placeholder="请输入企业名称"
+          >
+            企业名称
+          </InputItem>
+          { cardType === 0 ?
+            <InputItem
+              labelNumber={6}
+              {...getFieldProps('regCode', {
+                rules: [],
+              })}
+              clear
+              error={!!getFieldError('regCode')}
+              onErrorClick={(e) => {
+                showMessage(getFieldError('regCode').join('、'), e);
+              }}
+              placeholder=""
+            >
+              注册号
+            </InputItem> :
+            null }
+        </div>
+      );
+      break;
+    case '1':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name', {
+              rules: [
+                { required: true, message: '请输入社会团体名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name').join('、'), e);
+            }}
+            placeholder="请输入社会团体名称"
+          >
+            社会团体名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode', {
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode').join('、'), e);
+            }}
+            placeholder=""
+          >
+            社证号
+          </InputItem>
+        </div>
+      );
+      break;
+    case '2':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name', {
+              rules: [
+                { required: true, message: '请输入事业单位名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name').join('、'), e);
+            }}
+            placeholder="请输入事业单位名称"
+          >
+            事业单位名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode', {
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode').join('、'), e);
+            }}
+            placeholder=""
+          >
+            事证号
+          </InputItem>
+        </div>
+      );
+      break;
+    case '3':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name', {
+              rules: [
+                { required: true, message: '请输入民办非企业单位信息' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name').join('、'), e);
+            }}
+            placeholder="请输入民办非企业单位信息"
+          >
+            民办单位名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode', {
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode').join('、'), e);
+            }}
+            placeholder=""
+          >
+            民证字号
+          </InputItem>
+        </div>
+      );
+      break;
+    case '4':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name', {
+              rules: [
+                { required: true, message: '请输入单位名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name').join('、'), e);
+            }}
+            placeholder="请输入单位名称"
+          >
+            单位名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode', {
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode').join('、'), e);
+            }}
+            placeholder=""
+          >
+            执法证号
+          </InputItem>
+        </div>
+      );
+      break;
+    default:
+      organInfoList = () => (null);
+  }
+  let idCardIdNoElm = null;
+  switch (legalArea[0]) {
+    case '0':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('idCardIdNo', {
+            rules: [
+              { required: true, message: '请输入身份证号' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('idCardIdNo')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('idCardIdNo').join('、'), e);
+          }}
+          placeholder="请输入身份证号"
+        >
+          身份证号
+        </InputItem>
+      );
+      break;
+    case '1':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('idCardIdNo', {
+            rules: [
+              { required: true, message: '请输入港澳居民来往内地通行证' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('idCardIdNo')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('idCardIdNo').join('、'), e);
+          }}
+          placeholder="请输入港澳居民来往内地通行证"
+        >
+          港澳居民来往内地通行证
+        </InputItem>
+      );
+      break;
+    case '2':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('idCardIdNo', {
+            rules: [
+              { required: true, message: '请输入港澳居民来往内地通行证' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('idCardIdNo')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('idCardIdNo').join('、'), e);
+          }}
+          placeholder="请输入港澳居民来往内地通行证"
+        >
+          港澳居民来往内地通行证
+        </InputItem>
+      );
+      break;
+    case '3':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('idCardIdNo', {
+            rules: [
+              { required: true, message: '请输入台胞证' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('idCardIdNo')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('idCardIdNo').join('、'), e);
+          }}
+          placeholder="请输入台胞证"
+        >
+          台胞证
+        </InputItem>
+      );
+      break;
+    case '4':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('idCardIdNo', {
+            rules: [
+              { required: true, message: '请输入护照号' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('idCardIdNo')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('idCardIdNo').join('、'), e);
+          }}
+          placeholder="请输入护照号"
+        >
+          护照号
+        </InputItem>
+      );
+      break;
+    default:
+      idCardIdNoElm = () => (null);
+  }
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
     // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
@@ -81,6 +391,14 @@ function RealnameOrgan(props) {
       },
     });
   };
+  const changeCardType = (e, value) => {
+    dispatch({
+      type: 'realnameOrgan/changeCardType',
+      payload: {
+        cardType: value,
+      },
+    });
+  };
   return (
     <div>
       <NavBar
@@ -106,37 +424,7 @@ function RealnameOrgan(props) {
           renderHeader={() => '企业信息'}
           // renderFooter={() => getFieldError('name') && getFieldError('name').join(',')}
         >
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('name', {
-              rules: [
-                { required: true, message: '请输入企业名称' },
-                { validator: validateName },
-              ],
-            })}
-            clear
-            error={!!getFieldError('name')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('name').join('、'), e);
-            }}
-            placeholder="请输入企业名称"
-          >
-            企业名称
-          </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('regCode', {
-              rules: [],
-            })}
-            clear
-            error={!!getFieldError('regCode')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('regCode').join('、'), e);
-            }}
-            placeholder=""
-          >
-            注册号
-          </InputItem>
+          {organInfoList()}
           <Picker
             extra="请选择" data={district} title="选择地区" {...getFieldProps('district')}
           >
@@ -166,22 +454,39 @@ function RealnameOrgan(props) {
           >
             <List.Item arrow="horizontal">营业期限</List.Item>
           </DatePicker>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('organCode', {
-              rules: [
-                { required: true, message: '请输入组织机构代码' },
-              ],
-            })}
-            clear
-            error={!!getFieldError('organCode')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('organCode').join('、'), e);
-            }}
-            placeholder="请输入组织机构代码"
-          >
-            组织机构代码
-          </InputItem>
+          { organType[0] === '0' && cardType === 1 ?
+            <InputItem
+              labelNumber={6}
+              {...getFieldProps('organCode', {
+                rules: [
+                  { required: true, message: '请输入社会信用代码' },
+                ],
+              })}
+              clear
+              error={!!getFieldError('organCode')}
+              onErrorClick={(e) => {
+                showMessage(getFieldError('organCode').join('、'), e);
+              }}
+              placeholder="请输入社会信用代码"
+            >
+              社会信用代码
+            </InputItem> :
+            <InputItem
+              labelNumber={6}
+              {...getFieldProps('organCode', {
+                rules: [
+                  { required: true, message: '请输入组织机构代码' },
+                ],
+              })}
+              clear
+              error={!!getFieldError('organCode')}
+              onErrorClick={(e) => {
+                showMessage(getFieldError('organCode').join('、'), e);
+              }}
+              placeholder="请输入组织机构代码"
+            >
+              组织机构代码
+            </InputItem> }
           <Flex className={styles.form_flex}>
             <Flex.Item style={{ flex: 6 }}>填写人身份</Flex.Item>
             <Flex.Item style={{ flex: 12 }}>
@@ -217,68 +522,54 @@ function RealnameOrgan(props) {
           >
             法人姓名
           </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('idCardIdNo', {
-              rules: [
-                { required: true, message: '请输入身份证号' },
-              ],
-            })}
-            clear
-            error={!!getFieldError('idCardIdNo')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('idCardIdNo').join('、'), e);
-            }}
-            placeholder="请输入身份证号"
-          >
-            身份证号
-          </InputItem>
+          {idCardIdNoElm()}
         </List>
-        <List
-          renderHeader={() => '代理人信息'}
-          style={{ display: showAgent }}
-        >
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('agentName', {
-              rules: [
-                { required: true, message: '请输入代理人姓名' },
-              ],
-            })}
-            clear
-            error={!!getFieldError('agentName')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('agentName').join('、'), e);
-            }}
-            placeholder="请输入代理人姓名"
+        { userType === 1 ?
+          <List
+            renderHeader={() => '代理人信息'}
           >
-            代理人姓名
-          </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('agentIdNo', {
-              rules: [
-                { required: true, message: '请输入身份证号' },
-              ],
-            })}
-            clear
-            error={!!getFieldError('agentIdNo')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('agentIdNo').join('、'), e);
-            }}
-            placeholder="请输入身份证号"
-          >
-            身份证号
-          </InputItem>
-          <DatePicker
-            mode="date"
-            title="选择日期"
-            extra="请选择"
-            {...getFieldProps('agentEndTime')}
-          >
-            <List.Item arrow="horizontal">身份证有效期</List.Item>
-          </DatePicker>
-        </List>
+            <InputItem
+              labelNumber={6}
+              {...getFieldProps('agentName', {
+                rules: [
+                  { required: true, message: '请输入代理人姓名' },
+                ],
+              })}
+              clear
+              error={!!getFieldError('agentName')}
+              onErrorClick={(e) => {
+                showMessage(getFieldError('agentName').join('、'), e);
+              }}
+              placeholder="请输入代理人姓名"
+            >
+              代理人姓名
+            </InputItem>
+            <InputItem
+              labelNumber={6}
+              {...getFieldProps('agentIdNo', {
+                rules: [
+                  { required: true, message: '请输入身份证号' },
+                ],
+              })}
+              clear
+              error={!!getFieldError('agentIdNo')}
+              onErrorClick={(e) => {
+                showMessage(getFieldError('agentIdNo').join('、'), e);
+              }}
+              placeholder="请输入身份证号"
+            >
+              身份证号
+            </InputItem>
+            <DatePicker
+              mode="date"
+              title="选择日期"
+              extra="请选择"
+              {...getFieldProps('agentEndTime')}
+            >
+              <List.Item arrow="horizontal">身份证有效期</List.Item>
+            </DatePicker>
+          </List> :
+          null }
         <List
           renderHeader={() => '银行账户信息'}
         >

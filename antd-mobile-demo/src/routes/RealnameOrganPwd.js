@@ -4,7 +4,7 @@ import { NavBar, Picker, List, InputItem, Button, Modal, ActivityIndicator } fro
 import { createForm } from 'rc-form';
 // import { moment } from 'moment';
 // import 'moment/locale/zh-cn';
-import styles from './RealnameOrganPwd.less';
+import styles from './mixins.less';
 
 // const Item = List.Item;
 // const zhNow = moment().locale('zh-cn').utcOffset(8);
@@ -155,7 +155,7 @@ function RealnameOrganPwd(props) {
             答案
           </InputItem>
         </List>
-        <Button className="btn" style={{ marginTop: 30 }} type="primary" onClick={onSubmit}>下一步</Button>
+        <Button className="btn my-bottom-btn" type="primary" onClick={onSubmit}>下一步</Button>
       </form>
 
       <Modal

@@ -1,4 +1,4 @@
-import { updateAccountInfo } from '../services/service';
+import { getAccountInfo, updateAccountInfo } from '../services/service';
 
 export default {
   namespace: 'realnameOrgan',
@@ -25,7 +25,6 @@ export default {
         label: '党政及国家机关',
       },
     ],
-    organType: ['0'],
     legalAreaList: [
       {
         value: '0',
@@ -48,12 +47,14 @@ export default {
         label: '外籍',
       },
     ],
+    organType: ['0'],
     legalArea: ['0'],
     userType: 1,
-    showAgent: 'block',
+    cardType: 0,
     messageVisible: false,
     message: '',
     updateAccountInfoResponse: null,
+    accountInfo: null,
   },
   reducers: {
     changeOrganType(state, { payload }) {
@@ -66,17 +67,23 @@ export default {
     },
     changeUserType(state, { payload }) {
       const { userType } = payload;
-      if (userType === 1) {
-        return { ...state, userType, showAgent: 'block' };
-      } else {
-        return { ...state, userType, showAgent: 'none' };
-      }
+      return { ...state, userType };
+    },
+    changeCardType(state, { payload }) {
+      const { cardType } = payload;
+      return { ...state, cardType };
     },
     showMessage(state, { payload }) {
       const { messageVisible, message } = payload;
       return { ...state, messageVisible, message };
     },
+    setAccountInfo(state, { payload: data }) {
+      return { ...state, accountInfo: data };
+    },
     setUpdateAccountInfoResponse(state, { payload: data }) {
+      if (data.data.errCode === 0) {
+        window.location.href = './realname-organ-pwd.html';
+      }
       return { ...state, updateAccountInfoResponse: data };
     },
   },
@@ -91,6 +98,25 @@ export default {
         },
       });
     },
+    *getAccountInfo({ payload }, { call, put }) {
+      const { data } = yield call(getAccountInfo);
+      console.log('data:', data);
+      yield put({
+        type: 'setAccountInfo',
+        payload: {
+          data,
+        },
+      });
+    },
   },
-  subscriptions: {},
+  subscriptions: {
+    init({ dispatch }) {
+      debugger;
+      if (window.location.href.indexOf('realname-organ.html') > -1) {
+        dispatch({
+          type: 'getAccountInfo',
+        });
+      }
+    },
+  },
 };
