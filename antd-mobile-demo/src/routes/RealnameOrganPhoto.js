@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva/mobile';
-import { NavBar, List, Button, Modal, ActivityIndicator, ImagePicker } from 'antd-mobile';
+import { NavBar, List, Button, Modal, ActivityIndicator, ImagePicker, Flex } from 'antd-mobile';
 import { createForm } from 'rc-form';
 // import { moment } from 'moment';
 // import 'moment/locale/zh-cn';
@@ -55,6 +55,7 @@ function RealnameOrganPhoto(props) {
       type: 'realnameOrganPhoto/onFileChange',
       payload: {
         credentials: files,
+        type,
       },
     });
   };
@@ -70,31 +71,66 @@ function RealnameOrganPhoto(props) {
         <List
           renderHeader={() => '企业法人营业执照'}
         >
-          <ImagePicker
-            files={credentials}
-            onChange={onFileChange}
-            onImageClick={(index, fs) => console.log(index, fs)}
-            selectable={credentials.length < 1}
-          />
+          <Flex
+            className="my-flexbox-item-column"
+          >
+            <Flex.Item>
+              <ImagePicker
+                className="my-image-picker"
+                files={credentials}
+                onChange={onFileChange}
+                onImageClick={(index, fs) => console.log(index, fs)}
+                selectable={credentials.length < 1}
+              />
+            </Flex.Item>
+            <Flex.Item
+              className="my-flexbox-item"
+            >
+              <div style={{ textAlign: 'center', paddingRight: '60px', marginBottom: '0.12rem' }}>营业执照</div>
+            </Flex.Item>
+          </Flex>
         </List>
         <List
+          className="my-am-list"
           renderHeader={() => '法定代表人的证件照片'}
           // renderFooter={() => getFieldError('name') && getFieldError('name').join(',')}
         >
-          <ImagePicker
-            files={credentials}
-            onChange={onFileChange}
-            onImageClick={(index, fs) => console.log(index, fs)}
-            selectable={credentials.length < 1}
-          />
-          <ImagePicker
-            files={credentials}
-            onChange={onFileChange}
-            onImageClick={(index, fs) => console.log(index, fs)}
-            selectable={credentials.length < 1}
-          />
+          <Flex>
+            <Flex.Item>
+              <Flex.Item>
+                <ImagePicker
+                  className="my-image-picker"
+                  files={credentials}
+                  onChange={onFileChange}
+                  onImageClick={(index, fs) => console.log(index, fs)}
+                  selectable={credentials.length < 1}
+                />
+              </Flex.Item>
+              <Flex.Item
+                className="my-flexbox-item"
+              >
+                <div style={{ textAlign: 'center', paddingRight: '60px', marginBottom: '0.12rem' }}>身份正正面照</div>
+              </Flex.Item>
+            </Flex.Item>
+            <Flex.Item>
+              <Flex.Item>
+                <ImagePicker
+                  className="my-image-picker"
+                  files={credentials}
+                  onChange={onFileChange}
+                  onImageClick={(index, fs) => console.log(index, fs)}
+                  selectable={credentials.length < 1}
+                />
+              </Flex.Item>
+              <Flex.Item
+                className="my-flexbox-item"
+              >
+                <div style={{ textAlign: 'center', paddingRight: '60px', marginBottom: '0.12rem' }}>身份正反面照</div>
+              </Flex.Item>
+            </Flex.Item>
+          </Flex>
         </List>
-        <Button className="btn" style={{ marginTop: 30 }} type="primary" onClick={onSubmit}>确认</Button>
+        <Button className="btn" style={{ marginTop: 30, position: 'fixed', bottom: 0 }} type="primary" onClick={onSubmit}>确认</Button>
       </form>
 
       <Modal

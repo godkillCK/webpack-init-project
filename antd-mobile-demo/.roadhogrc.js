@@ -3,6 +3,7 @@ const pxtorem = require('postcss-pxtorem');
 
 export default {
   entry: "src/pages/*.js",
+  publicPath: "/ic/static/",
   autoprefixer: {
     "browsers": [
       "iOS >= 8", "Android >= 4"

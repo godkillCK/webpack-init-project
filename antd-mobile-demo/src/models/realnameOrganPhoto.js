@@ -4,14 +4,15 @@ export default {
   namespace: 'realnameOrganPhoto',
   state: {
     credentials: [],
+    type: '',
     messageVisible: false,
     message: '',
     updateAccountSafeInfoResponse: null,
   },
   reducers: {
     onFileChange(state, { payload }) {
-      const { credentials } = payload;
-      return { ...state, credentials };
+      const { credentials, type } = payload;
+      return { ...state, credentials, type };
     },
     showMessage(state, { payload }) {
       const { messageVisible, message } = payload;
