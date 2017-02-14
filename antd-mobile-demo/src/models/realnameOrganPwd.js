@@ -91,6 +91,9 @@ export default {
       return { ...state, messageVisible, message };
     },
     setUpdateAccountSafeInfoResponse(state, { payload: data }) {
+      if (data.data.errCode === 0) {
+        window.location.href = './realname-organ-photo.html';
+      }
       return { ...state, updateAccountSafeInfoResponse: data };
     },
   },

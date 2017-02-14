@@ -1,5 +1,12 @@
 import request from '../utils/request';
 
+export async function getAccountInfo() {
+  return request('../service/ic/account/detail', {
+    method: 'GET',
+    credentials: 'same-origin',
+  });
+}
+
 export async function updateAccountInfo(values) {
   return request('../service/ic/account/updateAccountInfo', {
     method: 'POST',
