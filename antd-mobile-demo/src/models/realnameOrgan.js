@@ -47,10 +47,10 @@ export default {
         label: '外籍',
       },
     ],
-    organType: ['0'],
-    legalArea: ['0'],
-    userType: 1,
-    cardType: 0,
+    // organType: ['0'],
+    // legalArea: ['0'],
+    // userType: 1,
+    // licenseType: 0,
     messageVisible: false,
     message: '',
     updateAccountInfoResponse: null,
@@ -59,26 +59,43 @@ export default {
   reducers: {
     changeOrganType(state, { payload }) {
       const { organType } = payload;
-      return { ...state, organType };
+      const accountInfo = { ...state.accountInfo };
+      accountInfo.data.organize.organType = organType[0];
+      return { ...state, accountInfo };
     },
     changeLegalArea(state, { payload }) {
       const { legalArea } = payload;
-      return { ...state, legalArea };
+      const accountInfo = { ...state.accountInfo };
+      accountInfo.data.organize.legalArea = legalArea[0];
+      return { ...state, accountInfo };
     },
     changeUserType(state, { payload }) {
       const { userType } = payload;
-      return { ...state, userType };
+      const accountInfo = { ...state.accountInfo };
+      accountInfo.data.organize.userType = userType;
+      return { ...state, accountInfo };
     },
-    changeCardType(state, { payload }) {
-      const { cardType } = payload;
-      return { ...state, cardType };
+    changeLicenseType(state, { payload }) {
+      const { licenseType } = payload;
+      const accountInfo = { ...state.accountInfo };
+      accountInfo.data.organize.licenseType = licenseType;
+      return { ...state, accountInfo };
+    },
+    onChangeOrganizeField(state, { payload }) {
+      const { fieldName, value } = payload;
+      console.log('fieldName: ', fieldName);
+      console.log('value: ', value);
+      const accountInfo = { ...state.accountInfo };
+      accountInfo.data.organize[fieldName] = value;
+      console.log('newAccountInfo: ', accountInfo);
+      return { ...state, accountInfo };
     },
     showMessage(state, { payload }) {
       const { messageVisible, message } = payload;
       return { ...state, messageVisible, message };
     },
     setAccountInfo(state, { payload: data }) {
-      return { ...state, accountInfo: data };
+      return { ...state, accountInfo: data.data };
     },
     setUpdateAccountInfoResponse(state, { payload: data }) {
       if (data.data.errCode === 0) {

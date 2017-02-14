@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva/mobile';
 import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, Flex, Checkbox, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
+import { isEmptyObj } from '../utils/commonutil';
 // import { moment } from 'moment';
 // import 'moment/locale/zh-cn';
 import district from '../models/district';
@@ -9,318 +10,36 @@ import styles from './mixins.less';
 
 // const Item = List.Item;
 // const zhNow = moment().locale('zh-cn').utcOffset(8);
+const AgreeItem = Checkbox.AgreeItem;
 
 function RealnameOrgan(props) {
-  const { loading, dispatch, organTypeList, organType, legalAreaList, legalArea, userType, cardType, form, messageVisible, message } = props;
-  let organInfoList = null;
-  switch (organType[0]) {
-    case '0':
-      organInfoList = () => (
-        <div>
-          <Flex className={styles.form_flex_border}>
-            <Flex.Item style={{ flex: 6 }}>证件类型</Flex.Item>
-            <Flex.Item style={{ flex: 12 }}>
-              <Flex.Item>
-                <Checkbox onChange={(e) => { changeCardType(e, 0); }} checked={cardType === 0}>普通营业执照</Checkbox>
-              </Flex.Item>
-              <Flex.Item
-                className="my-flexbox-item"
-              >
-                <Checkbox onChange={(e) => { changeCardType(e, 1); }} checked={cardType === 1}>多证合一营业执照</Checkbox>
-              </Flex.Item>
-            </Flex.Item>
-          </Flex>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('name', {
-              rules: [
-                { required: true, message: '请输入企业名称' },
-                { validator: validateName },
-              ],
-            })}
-            clear
-            error={!!getFieldError('name')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('name').join('、'), e);
-            }}
-            placeholder="请输入企业名称"
-          >
-            企业名称
-          </InputItem>
-          { cardType === 0 ?
-            <InputItem
-              labelNumber={6}
-              {...getFieldProps('regCode', {
-                rules: [],
-              })}
-              clear
-              error={!!getFieldError('regCode')}
-              onErrorClick={(e) => {
-                showMessage(getFieldError('regCode').join('、'), e);
-              }}
-              placeholder=""
-            >
-              注册号
-            </InputItem> :
-            null }
-        </div>
-      );
-      break;
-    case '1':
-      organInfoList = () => (
-        <div>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('name', {
-              rules: [
-                { required: true, message: '请输入社会团体名称' },
-                { validator: validateName },
-              ],
-            })}
-            clear
-            error={!!getFieldError('name')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('name').join('、'), e);
-            }}
-            placeholder="请输入社会团体名称"
-          >
-            社会团体名称
-          </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('regCode', {
-              rules: [],
-            })}
-            clear
-            error={!!getFieldError('regCode')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('regCode').join('、'), e);
-            }}
-            placeholder=""
-          >
-            社证号
-          </InputItem>
-        </div>
-      );
-      break;
-    case '2':
-      organInfoList = () => (
-        <div>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('name', {
-              rules: [
-                { required: true, message: '请输入事业单位名称' },
-                { validator: validateName },
-              ],
-            })}
-            clear
-            error={!!getFieldError('name')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('name').join('、'), e);
-            }}
-            placeholder="请输入事业单位名称"
-          >
-            事业单位名称
-          </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('regCode', {
-              rules: [],
-            })}
-            clear
-            error={!!getFieldError('regCode')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('regCode').join('、'), e);
-            }}
-            placeholder=""
-          >
-            事证号
-          </InputItem>
-        </div>
-      );
-      break;
-    case '3':
-      organInfoList = () => (
-        <div>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('name', {
-              rules: [
-                { required: true, message: '请输入民办非企业单位信息' },
-                { validator: validateName },
-              ],
-            })}
-            clear
-            error={!!getFieldError('name')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('name').join('、'), e);
-            }}
-            placeholder="请输入民办非企业单位信息"
-          >
-            民办单位名称
-          </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('regCode', {
-              rules: [],
-            })}
-            clear
-            error={!!getFieldError('regCode')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('regCode').join('、'), e);
-            }}
-            placeholder=""
-          >
-            民证字号
-          </InputItem>
-        </div>
-      );
-      break;
-    case '4':
-      organInfoList = () => (
-        <div>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('name', {
-              rules: [
-                { required: true, message: '请输入单位名称' },
-                { validator: validateName },
-              ],
-            })}
-            clear
-            error={!!getFieldError('name')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('name').join('、'), e);
-            }}
-            placeholder="请输入单位名称"
-          >
-            单位名称
-          </InputItem>
-          <InputItem
-            labelNumber={6}
-            {...getFieldProps('regCode', {
-              rules: [],
-            })}
-            clear
-            error={!!getFieldError('regCode')}
-            onErrorClick={(e) => {
-              showMessage(getFieldError('regCode').join('、'), e);
-            }}
-            placeholder=""
-          >
-            执法证号
-          </InputItem>
-        </div>
-      );
-      break;
-    default:
-      organInfoList = () => (null);
-  }
-  let idCardIdNoElm = null;
-  switch (legalArea[0]) {
-    case '0':
-      idCardIdNoElm = () => (
-        <InputItem
-          labelNumber={6}
-          {...getFieldProps('idCardIdNo', {
-            rules: [
-              { required: true, message: '请输入身份证号' },
-            ],
-          })}
-          clear
-          error={!!getFieldError('idCardIdNo')}
-          onErrorClick={(e) => {
-            showMessage(getFieldError('idCardIdNo').join('、'), e);
-          }}
-          placeholder="请输入身份证号"
-        >
-          身份证号
-        </InputItem>
-      );
-      break;
-    case '1':
-      idCardIdNoElm = () => (
-        <InputItem
-          labelNumber={6}
-          {...getFieldProps('idCardIdNo', {
-            rules: [
-              { required: true, message: '请输入港澳居民来往内地通行证' },
-            ],
-          })}
-          clear
-          error={!!getFieldError('idCardIdNo')}
-          onErrorClick={(e) => {
-            showMessage(getFieldError('idCardIdNo').join('、'), e);
-          }}
-          placeholder="请输入港澳居民来往内地通行证"
-        >
-          港澳居民来往内地通行证
-        </InputItem>
-      );
-      break;
-    case '2':
-      idCardIdNoElm = () => (
-        <InputItem
-          labelNumber={6}
-          {...getFieldProps('idCardIdNo', {
-            rules: [
-              { required: true, message: '请输入港澳居民来往内地通行证' },
-            ],
-          })}
-          clear
-          error={!!getFieldError('idCardIdNo')}
-          onErrorClick={(e) => {
-            showMessage(getFieldError('idCardIdNo').join('、'), e);
-          }}
-          placeholder="请输入港澳居民来往内地通行证"
-        >
-          港澳居民来往内地通行证
-        </InputItem>
-      );
-      break;
-    case '3':
-      idCardIdNoElm = () => (
-        <InputItem
-          labelNumber={6}
-          {...getFieldProps('idCardIdNo', {
-            rules: [
-              { required: true, message: '请输入台胞证' },
-            ],
-          })}
-          clear
-          error={!!getFieldError('idCardIdNo')}
-          onErrorClick={(e) => {
-            showMessage(getFieldError('idCardIdNo').join('、'), e);
-          }}
-          placeholder="请输入台胞证"
-        >
-          台胞证
-        </InputItem>
-      );
-      break;
-    case '4':
-      idCardIdNoElm = () => (
-        <InputItem
-          labelNumber={6}
-          {...getFieldProps('idCardIdNo', {
-            rules: [
-              { required: true, message: '请输入护照号' },
-            ],
-          })}
-          clear
-          error={!!getFieldError('idCardIdNo')}
-          onErrorClick={(e) => {
-            showMessage(getFieldError('idCardIdNo').join('、'), e);
-          }}
-          placeholder="请输入护照号"
-        >
-          护照号
-        </InputItem>
-      );
-      break;
-    default:
-      idCardIdNoElm = () => (null);
+  const { loading, dispatch, organTypeList, legalAreaList, accountInfo, form, messageVisible, message } = props;
+  let organType = ['0'];
+  let legalArea = ['0'];
+  let userType = 1;
+  let licenseType = 0;
+  let name = '';
+  let regCode = '';
+  let organEndTime = '0';
+  let organCode = '';
+  let legalName = '';
+  let legalIdNo = '';
+  let agentName = '';
+  let agentIdNo = '';
+  if (!isEmptyObj(accountInfo) && !isEmptyObj(accountInfo.data) && !isEmptyObj(accountInfo.data.organize)) {
+    const organize = accountInfo.data.organize;
+    organType = [organize.organType.toString()];
+    legalArea = [organize.legalArea.toString()];
+    userType = organize.userType;
+    licenseType = organize.licenseType;
+    name = organize.name;
+    regCode = organize.regCode;
+    organEndTime = organize.organEndTime;
+    organCode = organize.organCode;
+    legalName = organize.legalName;
+    legalIdNo = organize.legalIdNo;
+    agentName = organize.agentName;
+    agentIdNo = organize.agentIdNo;
   }
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
@@ -343,21 +62,22 @@ function RealnameOrgan(props) {
       },
     });
   };
+  const { getFieldProps, getFieldError } = form;
   const onSubmit = (e) => {
-    dispatch({
-      type: 'realnameOrgan/updateAccountInfo',
-      payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
-    });
-    // form.validateFields({ force: true }, (error) => {
-    //   if (error) {
-    //     showMessage('校验失败', e);
-    //   } else {
-    //     dispatch({
-    //       type: 'realnameOrgan/updateAccountInfo',
-    //       payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
-    //     });
-    //   }
+    // dispatch({
+    //   type: 'realnameOrgan/updateAccountInfo',
+    //   payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
     // });
+    form.validateFields({ force: true }, (error) => {
+      if (error) {
+        showMessage('校验失败', e);
+      } else {
+        dispatch({
+          type: 'realnameOrgan/updateAccountInfo',
+          payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
+        });
+      }
+    });
   };
   const validateName = (rule, value, callback) => {
     if (/^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/.test(value)) {
@@ -366,7 +86,6 @@ function RealnameOrgan(props) {
       callback(new Error('只能包括中文/英文字母'));
     }
   };
-  const { getFieldProps, getFieldError } = form;
   const changeOrganType = (value) => {
     dispatch({
       type: 'realnameOrgan/changeOrganType',
@@ -391,14 +110,394 @@ function RealnameOrgan(props) {
       },
     });
   };
-  const changeCardType = (e, value) => {
+  const changeLicenseType = (e, value) => {
     dispatch({
-      type: 'realnameOrgan/changeCardType',
+      type: 'realnameOrgan/changeLicenseType',
       payload: {
-        cardType: value,
+        licenseType: value,
       },
     });
   };
+  const onChangeOrganizeField = (fieldName, value) => {
+    dispatch({
+      type: 'realnameOrgan/onChangeOrganizeField',
+      payload: {
+        fieldName,
+        value,
+      },
+    });
+  };
+  let organInfoList = null;
+  switch (organType[0]) {
+    case '0':
+      organInfoList = () => (
+        <div>
+          <Flex className={styles.form_flex_border}>
+            <Flex.Item style={{ flex: 6 }}>证件类型</Flex.Item>
+            <Flex.Item style={{ flex: 12 }}>
+              <Flex.Item>
+                <Checkbox onChange={(e) => { changeLicenseType(e, 0); }} checked={licenseType === 0}>普通营业执照</Checkbox>
+              </Flex.Item>
+              <Flex.Item
+                className="my-flexbox-item"
+              >
+                <Checkbox onChange={(e) => { changeLicenseType(e, 1); }} checked={licenseType === 1}>多证合一营业执照</Checkbox>
+              </Flex.Item>
+            </Flex.Item>
+          </Flex>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name', {
+              initialValue: name,
+              // validateTrigger: 'onChange',
+              onChange(value) {
+                onChangeOrganizeField('name', value);
+              },
+              rules: [
+                { required: true, message: '请输入企业名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name').join('、'), e);
+            }}
+            placeholder="请输入企业名称"
+          >
+            企业名称
+          </InputItem>
+          { licenseType === 0 ?
+            <InputItem
+              labelNumber={6}
+              {...getFieldProps('regCode', {
+                initialValue: regCode,
+                onChange(value) {
+                  onChangeOrganizeField('regCode', value);
+                },
+                rules: [],
+              })}
+              clear
+              error={!!getFieldError('regCode')}
+              onErrorClick={(e) => {
+                showMessage(getFieldError('regCode').join('、'), e);
+              }}
+              placeholder=""
+            >
+              注册号
+            </InputItem> :
+            null }
+        </div>
+      );
+      break;
+    case '1':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name1', {
+              initialValue: name,
+              onChange(value) {
+                onChangeOrganizeField('name', value);
+              },
+              rules: [
+                { required: true, message: '请输入社会团体名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name1')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name1').join('、'), e);
+            }}
+            placeholder="请输入社会团体名称"
+          >
+            社会团体名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode1', {
+              initialValue: regCode,
+              onChange(value) {
+                onChangeOrganizeField('regCode', value);
+              },
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode1')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode1').join('、'), e);
+            }}
+            placeholder=""
+          >
+            社证号
+          </InputItem>
+        </div>
+      );
+      break;
+    case '2':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name2', {
+              initialValue: name,
+              onChange(value) {
+                onChangeOrganizeField('name', value);
+              },
+              rules: [
+                { required: true, message: '请输入事业单位名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name2')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name2').join('、'), e);
+            }}
+            placeholder="请输入事业单位名称"
+          >
+            事业单位名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode2', {
+              initialValue: regCode,
+              onChange(value) {
+                onChangeOrganizeField('regCode', value);
+              },
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode2')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode2').join('、'), e);
+            }}
+            placeholder=""
+          >
+            事证号
+          </InputItem>
+        </div>
+      );
+      break;
+    case '3':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name3', {
+              initialValue: name,
+              onChange(value) {
+                onChangeOrganizeField('name', value);
+              },
+              rules: [
+                { required: true, message: '请输入民办非企业单位信息' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name3')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name3').join('、'), e);
+            }}
+            placeholder="请输入民办非企业单位信息"
+          >
+            民办单位名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode3', {
+              initialValue: regCode,
+              onChange(value) {
+                onChangeOrganizeField('regCode', value);
+              },
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode3')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode3').join('、'), e);
+            }}
+            placeholder=""
+          >
+            民证字号
+          </InputItem>
+        </div>
+      );
+      break;
+    case '4':
+      organInfoList = () => (
+        <div>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('name4', {
+              initialValue: name,
+              onChange(value) {
+                onChangeOrganizeField('name', value);
+              },
+              rules: [
+                { required: true, message: '请输入单位名称' },
+                { validator: validateName },
+              ],
+            })}
+            clear
+            error={!!getFieldError('name4')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('name4').join('、'), e);
+            }}
+            placeholder="请输入单位名称"
+          >
+            单位名称
+          </InputItem>
+          <InputItem
+            labelNumber={6}
+            {...getFieldProps('regCode4', {
+              initialValue: regCode,
+              onChange(value) {
+                onChangeOrganizeField('regCode', value);
+              },
+              rules: [],
+            })}
+            clear
+            error={!!getFieldError('regCode4')}
+            onErrorClick={(e) => {
+              showMessage(getFieldError('regCode4').join('、'), e);
+            }}
+            placeholder=""
+          >
+            执法证号
+          </InputItem>
+        </div>
+      );
+      break;
+    default:
+      organInfoList = () => (null);
+  }
+  let idCardIdNoElm = null;
+  switch (legalArea[0]) {
+    case '0':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('legalIdNo', {
+            initialValue: legalIdNo,
+            onChange(value) {
+              onChangeOrganizeField('legalIdNo', value);
+            },
+            rules: [
+              { required: true, message: '请输入身份证号' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('legalIdNo')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('legalIdNo').join('、'), e);
+          }}
+          placeholder="请输入身份证号"
+        >
+          身份证号
+        </InputItem>
+      );
+      break;
+    case '1':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('legalIdNo1', {
+            initialValue: legalIdNo,
+            onChange(value) {
+              onChangeOrganizeField('legalIdNo', value);
+            },
+            rules: [
+              { required: true, message: '请输入港澳居民来往内地通行证' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('legalIdNo1')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('legalIdNo1').join('、'), e);
+          }}
+          placeholder="请输入港澳居民来往内地通行证"
+        >
+          港澳居民来往内地通行证
+        </InputItem>
+      );
+      break;
+    case '2':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('legalIdNo2', {
+            initialValue: legalIdNo,
+            onChange(value) {
+              onChangeOrganizeField('legalIdNo', value);
+            },
+            rules: [
+              { required: true, message: '请输入港澳居民来往内地通行证' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('legalIdNo2')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('legalIdNo2').join('、'), e);
+          }}
+          placeholder="请输入港澳居民来往内地通行证"
+        >
+          港澳居民来往内地通行证
+        </InputItem>
+      );
+      break;
+    case '3':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('legalIdNo3', {
+            initialValue: legalIdNo,
+            onChange(value) {
+              onChangeOrganizeField('legalIdNo', value);
+            },
+            rules: [
+              { required: true, message: '请输入台胞证' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('legalIdNo3')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('legalIdNo3').join('、'), e);
+          }}
+          placeholder="请输入台胞证"
+        >
+          台胞证
+        </InputItem>
+      );
+      break;
+    case '4':
+      idCardIdNoElm = () => (
+        <InputItem
+          labelNumber={6}
+          {...getFieldProps('legalIdNo4', {
+            initialValue: legalIdNo,
+            onChange(value) {
+              onChangeOrganizeField('legalIdNo', value);
+            },
+            rules: [
+              { required: true, message: '请输入护照号' },
+            ],
+          })}
+          clear
+          error={!!getFieldError('legalIdNo4')}
+          onErrorClick={(e) => {
+            showMessage(getFieldError('legalIdNo4').join('、'), e);
+          }}
+          placeholder="请输入护照号"
+        >
+          护照号
+        </InputItem>
+      );
+      break;
+    default:
+      idCardIdNoElm = () => (null);
+  }
   return (
     <div>
       <NavBar
@@ -447,17 +546,31 @@ function RealnameOrgan(props) {
             详细地址
           </InputItem>
           <DatePicker
+            disabled={false}
             mode="date"
-            title="选择日期"
+            title={
+              <AgreeItem defaultChecked={organEndTime === '0'} onChange={e => console.log('checkbox', e)}>
+                无期限
+              </AgreeItem>
+            }
             extra="请选择"
-            {...getFieldProps('organEndTime')}
+            {...getFieldProps('organEndTime', {
+              initialValue: organEndTime === '0' ? null : organEndTime,
+              // onChange(value) {
+              //   onChangeOrganizeField('organEndTime', value);
+              // },
+            })}
           >
             <List.Item arrow="horizontal">营业期限</List.Item>
           </DatePicker>
-          { organType[0] === '0' && cardType === 1 ?
+          { organType[0] === '0' && licenseType === 1 ?
             <InputItem
               labelNumber={6}
               {...getFieldProps('organCode', {
+                initialValue: organCode,
+                onChange(value) {
+                  onChangeOrganizeField('organCode', value);
+                },
                 rules: [
                   { required: true, message: '请输入社会信用代码' },
                 ],
@@ -473,15 +586,19 @@ function RealnameOrgan(props) {
             </InputItem> :
             <InputItem
               labelNumber={6}
-              {...getFieldProps('organCode', {
+              {...getFieldProps('organCode1', {
+                initialValue: organCode,
+                onChange(value) {
+                  onChangeOrganizeField('organCode', value);
+                },
                 rules: [
                   { required: true, message: '请输入组织机构代码' },
                 ],
               })}
               clear
-              error={!!getFieldError('organCode')}
+              error={!!getFieldError('organCode1')}
               onErrorClick={(e) => {
-                showMessage(getFieldError('organCode').join('、'), e);
+                showMessage(getFieldError('organCode1').join('、'), e);
               }}
               placeholder="请输入组织机构代码"
             >
@@ -509,6 +626,10 @@ function RealnameOrgan(props) {
           <InputItem
             labelNumber={6}
             {...getFieldProps('legalName', {
+              initialValue: legalName,
+              onChange(value) {
+                onChangeOrganizeField('legalName', value);
+              },
               rules: [
                 { required: true, message: '请输入法人姓名' },
               ],
@@ -531,6 +652,10 @@ function RealnameOrgan(props) {
             <InputItem
               labelNumber={6}
               {...getFieldProps('agentName', {
+                initialValue: agentName,
+                onChange(value) {
+                  onChangeOrganizeField('agentName', value);
+                },
                 rules: [
                   { required: true, message: '请输入代理人姓名' },
                 ],
@@ -547,6 +672,10 @@ function RealnameOrgan(props) {
             <InputItem
               labelNumber={6}
               {...getFieldProps('agentIdNo', {
+                initialValue: agentIdNo,
+                onChange(value) {
+                  onChangeOrganizeField('agentIdNo', value);
+                },
                 rules: [
                   { required: true, message: '请输入身份证号' },
                 ],
