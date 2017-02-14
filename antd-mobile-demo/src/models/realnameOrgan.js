@@ -90,7 +90,7 @@ export default {
   effects: {
     *updateAccountInfo({ payload: values }, { call, put }) {
       const { data } = yield call(updateAccountInfo, values);
-      console.log('data: ', data);
+      console.log('updateAccountInfo: ', data);
       yield put({
         type: 'setUpdateAccountInfoResponse',
         payload: {
@@ -100,7 +100,7 @@ export default {
     },
     *getAccountInfo({ payload }, { call, put }) {
       const { data } = yield call(getAccountInfo);
-      console.log('data:', data);
+      console.log('getAccountInfo:', data);
       yield put({
         type: 'setAccountInfo',
         payload: {
@@ -111,7 +111,6 @@ export default {
   },
   subscriptions: {
     init({ dispatch }) {
-      debugger;
       if (window.location.href.indexOf('realname-organ.html') > -1) {
         dispatch({
           type: 'getAccountInfo',

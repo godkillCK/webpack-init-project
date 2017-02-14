@@ -130,11 +130,7 @@ function RealnameOrganPhoto(props) {
             </Flex.Item>
           </Flex>
         </List>
-<<<<<<< HEAD
-        <Button className="btn" style={{ marginTop: 30, position: 'fixed', bottom: 0 }} type="primary" onClick={onSubmit}>确认</Button>
-=======
         <Button className="btn my-bottom-btn" type="primary" onClick={onSubmit}>确认</Button>
->>>>>>> cc77f8d00c0fd02bc94a69c8a53c440cd911906b
       </form>
 
       <Modal
