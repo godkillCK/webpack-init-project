@@ -28,3 +28,13 @@ export async function updateAccountSafeInfo(values) {
     },
   });
 }
+
+export async function uploadFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return request('../service/ic/file/uploadFile', {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: formData,
+  });
+}

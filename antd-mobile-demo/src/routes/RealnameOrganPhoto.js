@@ -10,7 +10,7 @@ import styles from './mixins.less';
 // const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 function RealnameOrganPhoto(props) {
-  const { loading, dispatch, credentials, form, messageVisible, message } = props;
+  const { loading, dispatch, regPhotoFile, legalPhotoProFile, legalPhotoConFile, form, messageVisible, message } = props;
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
     // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
@@ -33,31 +33,41 @@ function RealnameOrganPhoto(props) {
     });
   };
   const onSubmit = (e) => {
-    dispatch({
-      type: 'realnameOrganPhoto/updateAccountSafeInfo',
-      payload: '{"password":"96e79218965eb72c92a549dd5a330112","pwdAnswer":"111","pwdAnswer2":"111","pwdRequest":"我爸爸的名字？","pwdRequest2":"我妈妈的名字？"}',
+    form.validateFields({ force: true }, (error) => {
+      if (error) {
+        showMessage('校验失败', e);
+      } else {
+        dispatch({
+          type: 'realnameOrganPhoto/updateAccountInfo',
+        });
+      }
     });
-    // form.validateFields({ force: true }, (error) => {
-    //   if (error) {
-    //     showMessage('校验失败', e);
-    //   } else {
-    //     dispatch({
-    //       type: 'realnameOrgan/updateAccountInfo',
-    //       payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
-    //     });
-    //   }
-    // });
   };
   // const { getFieldProps, getFieldError } = form;
-  const onFileChange = (files, type, index) => {
-    console.log(files, type, index);
-    dispatch({
-      type: 'realnameOrganPhoto/onFileChange',
-      payload: {
-        credentials: files,
-        type,
-      },
-    });
+  const onFileChange = (files, type, index, photoType) => {
+    if (type === 'add') {
+      dispatch({
+        type: 'realnameOrganPhoto/uploadFile',
+        payload: {
+          photoType,
+          files,
+        },
+      });
+    } else {
+      const payload = {};
+      payload[`${photoType}File`] = files;
+      dispatch({
+        type: 'realnameOrganPhoto/onFileChange',
+        payload,
+      });
+      dispatch({
+        type: 'realnameOrganPhoto/setPhotoUrl',
+        payload: {
+          photoType,
+          url: '',
+        },
+      });
+    }
   };
   return (
     <div>
@@ -77,10 +87,10 @@ function RealnameOrganPhoto(props) {
             <Flex.Item>
               <ImagePicker
                 className="my-image-picker-organtype0"
-                files={credentials}
-                onChange={onFileChange}
+                files={regPhotoFile}
+                onChange={(files, type, index) => { onFileChange(files, type, index, 'regPhoto'); }}
                 onImageClick={(index, fs) => console.log(index, fs)}
-                selectable={credentials.length < 1}
+                selectable={regPhotoFile.length < 1}
               />
             </Flex.Item>
             <Flex.Item
@@ -100,10 +110,10 @@ function RealnameOrganPhoto(props) {
               <Flex.Item>
                 <ImagePicker
                   className="my-image-picker-idPro"
-                  files={credentials}
-                  onChange={onFileChange}
+                  files={legalPhotoProFile}
+                  onChange={(files, type, index) => { onFileChange(files, type, index, 'legalPhotoPro'); }}
                   onImageClick={(index, fs) => console.log(index, fs)}
-                  selectable={credentials.length < 1}
+                  selectable={legalPhotoProFile.length < 1}
                 />
               </Flex.Item>
               <Flex.Item
@@ -116,10 +126,10 @@ function RealnameOrganPhoto(props) {
               <Flex.Item>
                 <ImagePicker
                   className="my-image-picker-idCon"
-                  files={credentials}
-                  onChange={onFileChange}
+                  files={legalPhotoConFile}
+                  onChange={(files, type, index) => { onFileChange(files, type, index, 'legalPhotoCon'); }}
                   onImageClick={(index, fs) => console.log(index, fs)}
-                  selectable={credentials.length < 1}
+                  selectable={legalPhotoConFile.length < 1}
                 />
               </Flex.Item>
               <Flex.Item
