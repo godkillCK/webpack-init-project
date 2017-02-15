@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { updateAccountSafeInfo } from '../services/service';
 
 export default {
@@ -73,6 +74,9 @@ export default {
       },
     ],
     pwdRequest2: ['7'],
+    pwdAnswer: '',
+    pwdAnswer2: '',
+    password: '',
     messageVisible: false,
     message: '',
     updateAccountSafeInfoResponse: null,
@@ -86,6 +90,12 @@ export default {
       const { pwdRequest2 } = payload;
       return { ...state, pwdRequest2 };
     },
+    onChangeState(state, { payload }) {
+      const { fieldName, value } = payload;
+      const newState = {};
+      newState[fieldName] = value;
+      return { ...state, ...newState };
+    },
     showMessage(state, { payload }) {
       const { messageVisible, message } = payload;
       return { ...state, messageVisible, message };
@@ -98,9 +108,13 @@ export default {
     },
   },
   effects: {
-    *updateAccountSafeInfo({ payload: values }, { call, put }) {
-      const { data } = yield call(updateAccountSafeInfo, values);
-      console.log('data: ', data);
+    *updateAccountSafeInfo({ payload: values }, { select, call, put }) {
+      const realnameOrganPwdState = yield select(state => state.realnameOrganPwd);
+      const param = _.pick(realnameOrganPwdState, ['password', 'pwdAnswer', 'pwdAnswer2']);
+      param.pwdRequest = `${realnameOrganPwdState.pwdRequestList[realnameOrganPwdState.pwdRequest].label}？`;
+      param.pwdRequest2 = `${realnameOrganPwdState.pwdRequest2List[realnameOrganPwdState.pwdRequest2].label}？`;
+      const { data } = yield call(updateAccountSafeInfo, JSON.stringify(param));
+      console.log('updateAccountSafeInfo data: ', data);
       yield put({
         type: 'setUpdateAccountSafeInfoResponse',
         payload: {

@@ -30,7 +30,8 @@
     "require-yield": [1],
     "linebreak-style": [0],
     "no-param-reassign": [0],
-    "max-len": [0]
+    "max-len": [0],
+    "quote-props": [0]
   },
   "parserOptions": {
     "ecmaFeatures": {

@@ -1,4 +1,5 @@
 import React from 'react';
+import md5 from 'md5';
 import { connect } from 'dva/mobile';
 import { NavBar, Picker, List, InputItem, Button, Modal, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
@@ -33,20 +34,15 @@ function RealnameOrganPwd(props) {
     });
   };
   const onSubmit = (e) => {
-    dispatch({
-      type: 'realnameOrganPwd/updateAccountSafeInfo',
-      payload: '{"password":"96e79218965eb72c92a549dd5a330112","pwdAnswer":"111","pwdAnswer2":"111","pwdRequest":"我爸爸的名字？","pwdRequest2":"我妈妈的名字？"}',
+    form.validateFields({ force: true }, (error) => {
+      if (error) {
+        showMessage('校验失败', e);
+      } else {
+        dispatch({
+          type: 'realnameOrganPwd/updateAccountSafeInfo',
+        });
+      }
     });
-    // form.validateFields({ force: true }, (error) => {
-    //   if (error) {
-    //     showMessage('校验失败', e);
-    //   } else {
-    //     dispatch({
-    //       type: 'realnameOrgan/updateAccountInfo',
-    //       payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
-    //     });
-    //   }
-    // });
   };
   const { getFieldProps, getFieldError } = form;
   const changePwdRequest = (value) => {
@@ -65,6 +61,28 @@ function RealnameOrganPwd(props) {
       },
     });
   };
+  const onChangeState = (fieldName, value) => {
+    dispatch({
+      type: 'realnameOrganPwd/onChangeState',
+      payload: {
+        fieldName,
+        value,
+      },
+    });
+  };
+  const checkConfirm = (rule, value, callback) => {
+    if (value) {
+      form.validateFields(['confirm'], { force: true });
+    }
+    callback();
+  };
+  const checkPassword = (rule, value, callback) => {
+    if (value && value !== form.getFieldValue('password')) {
+      callback('两次密码不一致');
+    } else {
+      callback();
+    }
+  };
   return (
     <div>
       <NavBar
@@ -79,13 +97,20 @@ function RealnameOrganPwd(props) {
         >
           <InputItem
             labelNumber={5}
-            {...getFieldProps('signPwd', {
-              rules: [],
+            type="password"
+            {...getFieldProps('password', {
+              onChange(value) {
+                onChangeState('password', md5(value));
+              },
+              rules: [
+                { required: true, message: '请输入签署密码' },
+                { validator: checkConfirm },
+              ],
             })}
             clear
-            error={!!getFieldError('signPwd')}
+            error={!!getFieldError('password')}
             onErrorClick={(e) => {
-              showMessage(getFieldError('signPwd').join('、'), e);
+              showMessage(getFieldError('password').join('、'), e);
             }}
             placeholder=""
           >
@@ -93,13 +118,17 @@ function RealnameOrganPwd(props) {
           </InputItem>
           <InputItem
             labelNumber={5}
-            {...getFieldProps('signPwdConfirm', {
-              rules: [],
+            type="password"
+            {...getFieldProps('confirm', {
+              rules: [
+                { required: true, message: '请输入确认密码' },
+                { validator: checkPassword },
+              ],
             })}
             clear
-            error={!!getFieldError('signPwdConfirm')}
+            error={!!getFieldError('confirm')}
             onErrorClick={(e) => {
-              showMessage(getFieldError('signPwdConfirm').join('、'), e);
+              showMessage(getFieldError('confirm').join('、'), e);
             }}
             placeholder=""
           >
@@ -121,7 +150,12 @@ function RealnameOrganPwd(props) {
           <InputItem
             labelNumber={5}
             {...getFieldProps('pwdAnswer', {
-              rules: [],
+              onChange(value) {
+                onChangeState('pwdAnswer', value);
+              },
+              rules: [
+                { required: true, message: '请输入答案' },
+              ],
             })}
             clear
             error={!!getFieldError('pwdAnswer')}
@@ -143,7 +177,12 @@ function RealnameOrganPwd(props) {
           <InputItem
             labelNumber={5}
             {...getFieldProps('pwdAnswer2', {
-              rules: [],
+              onChange(value) {
+                onChangeState('pwdAnswer2', value);
+              },
+              rules: [
+                { required: true, message: '请输入答案' },
+              ],
             })}
             clear
             error={!!getFieldError('pwdAnswer2')}

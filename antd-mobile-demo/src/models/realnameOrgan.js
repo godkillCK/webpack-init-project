@@ -1,4 +1,7 @@
+import _ from 'lodash';
 import { getAccountInfo, updateAccountInfo } from '../services/service';
+import { isEmptyObj } from '../utils/commonutil';
+import district from '../models/district';
 
 export default {
   namespace: 'realnameOrgan',
@@ -83,11 +86,38 @@ export default {
     },
     onChangeOrganizeField(state, { payload }) {
       const { fieldName, value } = payload;
-      console.log('fieldName: ', fieldName);
-      console.log('value: ', value);
       const accountInfo = { ...state.accountInfo };
-      accountInfo.data.organize[fieldName] = value;
-      console.log('newAccountInfo: ', accountInfo);
+      const oldAddress = isEmptyObj(accountInfo.data.organize.address) ? '' : accountInfo.data.organize.address;
+      if (fieldName === 'address') {
+        let address = '';
+        for (const i in district) {
+          if (district[i].value === value[0]) {
+            address = `中国-${district[i].label}-${oldAddress.split('-')[2]}-${oldAddress.split('-')[3]}`;
+            for (const j in district[i].children) {
+              if (district[i].children[j].value === value[1]) {
+                address = `中国-${address.split('-')[1]}-${district[i].children[j].label}-${address.split('-')[3]}`;
+              }
+            }
+          }
+        }
+        accountInfo.data.organize.address = address;
+      } else if (fieldName === 'address1') {
+        accountInfo.data.organize.address = `中国-${oldAddress.split('-')[1]}-${oldAddress.split('-')[2]}-${value}`;
+      } else {
+        accountInfo.data.organize[fieldName] = value;
+      }
+      return { ...state, accountInfo };
+    },
+    onChangeBankField(state, { payload }) {
+      const { fieldName, value } = payload;
+      const accountInfo = { ...state.accountInfo };
+      const oldBank = isEmptyObj(accountInfo.data.bank) ? '' : accountInfo.data.bank;
+      if (fieldName === 'bankName') {
+        accountInfo.data.bank = `${value}-${oldBank.split('-')[1]}`;
+      } else if (fieldName === 'bankSubName') {
+        accountInfo.data.bank = `${oldBank.split('-')[0]}-${value}`;
+      }
+      accountInfo.data[fieldName] = value;
       return { ...state, accountInfo };
     },
     showMessage(state, { payload }) {
@@ -95,6 +125,9 @@ export default {
       return { ...state, messageVisible, message };
     },
     setAccountInfo(state, { payload: data }) {
+      if (isEmptyObj(data.data.organize)) {
+        data.data.organize = {};
+      }
       return { ...state, accountInfo: data.data };
     },
     setUpdateAccountInfoResponse(state, { payload: data }) {
@@ -105,9 +138,14 @@ export default {
     },
   },
   effects: {
-    *updateAccountInfo({ payload: values }, { call, put }) {
-      const { data } = yield call(updateAccountInfo, values);
-      console.log('updateAccountInfo: ', data);
+    *updateAccountInfo({ payload }, { select, call, put }) {
+      const accountInfo = yield select(state => state.realnameOrgan.accountInfo);
+      const param = _.pick(accountInfo.data, ['bank', 'bankNum', 'organize.name', 'organize.userType', 'organize.regCode', 'organize.organType',
+        'organize.organEndTime', 'organize.organCode', 'organize.legalArea', 'organize.legalName', 'organize.legalIdNo', 'organize.licenseType', 'organize.address', 'organize.agentName',
+        'organize.agentIdNo', 'organize.agentEndTime']);
+      console.log(JSON.stringify(param));
+      const { data } = yield call(updateAccountInfo, JSON.stringify(param));
+      console.log('updateAccountInfo data: ', data);
       yield put({
         type: 'setUpdateAccountInfoResponse',
         payload: {
@@ -117,7 +155,6 @@ export default {
     },
     *getAccountInfo({ payload }, { call, put }) {
       const { data } = yield call(getAccountInfo);
-      console.log('getAccountInfo:', data);
       yield put({
         type: 'setAccountInfo',
         payload: {

@@ -1,5 +1,13 @@
+@imgUrlOrganType0: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/c5ea84fe-d74a-4ee8-9baa-d48eb276eca1?Expires=1767576188&OSSAccessKeyId=FBzUaPMorqiiUAfb&Signature=mQk%2BTF36G2QsvSoazeclqGJDt54%3D');
+@imgUrlIdPro: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/7771d60c-7d87-4208-9088-5439aa9e4537?Expires=1767576189&OSSAccessKeyId=FBzUaPMorqiiUAfb&Signature=E1QAZZyAELQeY7pRmoBDI9cQ9qM%3D');
+@imgUrlIdCon: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/16deb8aa-62a9-4bb7-aaf1-3e325cb8295f?Expires=1767576189&OSSAccessKeyId=FBzUaPMorqiiUAfb&Signature=%2ByNNSEDEWINHZ7PA8awN5uwf6cE%3D');
 
 .normal {
+}
+
+.img_title {
+  text-align: center;
+  margin-bottom: 0.15rem;
 }
 
 :global {
@@ -9,9 +17,41 @@
   .my-image-picker .am-image-picker-list  {
     margin-bottom: 0;
   }
-  .my-image-picker .am-image-picker-list .am-image-picker-upload-btn {
-    background-image: url(../assets/yay.jpg);
-    background-size: cover;
+  .my-flexbox-align-middle {
+    .am-flexbox.am-flexbox-align-middle {
+      justify-content: center;
+    }
+    .am-image-picker-list .am-image-picker-item {
+      margin-right: 0;
+      margin-bottom: 0;
+    }
+    .am-image-picker-list {
+      margin-bottom: 0;
+    }
+  }
+  .my-image-picker-organtype0 {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @imgUrlOrganType0;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-idPro {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @imgUrlIdPro;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-idCon {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @imgUrlIdCon;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
   }
   .my-flexbox-item {
     margin-left: 0;

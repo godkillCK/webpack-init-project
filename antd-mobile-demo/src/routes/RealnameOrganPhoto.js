@@ -76,7 +76,7 @@ function RealnameOrganPhoto(props) {
           >
             <Flex.Item>
               <ImagePicker
-                className="my-image-picker"
+                className="my-image-picker-organtype0"
                 files={credentials}
                 onChange={onFileChange}
                 onImageClick={(index, fs) => console.log(index, fs)}
@@ -86,7 +86,7 @@ function RealnameOrganPhoto(props) {
             <Flex.Item
               className="my-flexbox-item"
             >
-              <div style={{ textAlign: 'center', paddingRight: '60px', marginBottom: '0.12rem' }}>营业执照</div>
+              <div className={styles.img_title}>营业执照</div>
             </Flex.Item>
           </Flex>
         </List>
@@ -99,7 +99,7 @@ function RealnameOrganPhoto(props) {
             <Flex.Item>
               <Flex.Item>
                 <ImagePicker
-                  className="my-image-picker"
+                  className="my-image-picker-idPro"
                   files={credentials}
                   onChange={onFileChange}
                   onImageClick={(index, fs) => console.log(index, fs)}
@@ -109,13 +109,13 @@ function RealnameOrganPhoto(props) {
               <Flex.Item
                 className="my-flexbox-item"
               >
-                <div style={{ textAlign: 'center', paddingRight: '60px', marginBottom: '0.12rem' }}>身份正正面照</div>
+                <div className={styles.img_title}>身份证信息页</div>
               </Flex.Item>
             </Flex.Item>
             <Flex.Item>
               <Flex.Item>
                 <ImagePicker
-                  className="my-image-picker"
+                  className="my-image-picker-idCon"
                   files={credentials}
                   onChange={onFileChange}
                   onImageClick={(index, fs) => console.log(index, fs)}
@@ -125,7 +125,7 @@ function RealnameOrganPhoto(props) {
               <Flex.Item
                 className="my-flexbox-item"
               >
-                <div style={{ textAlign: 'center', paddingRight: '60px', marginBottom: '0.12rem' }}>身份正反面照</div>
+                <div className={styles.img_title}>身份证国徽页</div>
               </Flex.Item>
             </Flex.Item>
           </Flex>

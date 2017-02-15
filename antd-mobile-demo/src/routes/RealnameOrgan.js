@@ -2,15 +2,14 @@ import React from 'react';
 import { connect } from 'dva/mobile';
 import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, Flex, Checkbox, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
+import moment from 'moment';
 import { isEmptyObj } from '../utils/commonutil';
-// import { moment } from 'moment';
-// import 'moment/locale/zh-cn';
 import district from '../models/district';
 import styles from './mixins.less';
 
 // const Item = List.Item;
 // const zhNow = moment().locale('zh-cn').utcOffset(8);
-const AgreeItem = Checkbox.AgreeItem;
+// const AgreeItem = Checkbox.AgreeItem;
 
 function RealnameOrgan(props) {
   const { loading, dispatch, organTypeList, legalAreaList, accountInfo, form, messageVisible, message } = props;
@@ -26,7 +25,27 @@ function RealnameOrgan(props) {
   let legalIdNo = '';
   let agentName = '';
   let agentIdNo = '';
+  let bankName = '';
+  let bankSubName = '';
+  let bankNum = '';
+  let address = [];
+  let address1 = '';
+  const getAddressValue = (addressValue) => {
+    const result = [];
+    for (const i in district) {
+      if (district[i].label === addressValue.split('-')[1]) {
+        result.push(district[i].value);
+        for (const j in district[i].children) {
+          if (district[i].children[j].label === addressValue.split('-')[2]) {
+            result.push(district[i].children[j].value);
+          }
+        }
+      }
+    }
+    return result;
+  };
   if (!isEmptyObj(accountInfo) && !isEmptyObj(accountInfo.data) && !isEmptyObj(accountInfo.data.organize)) {
+    const data = accountInfo.data;
     const organize = accountInfo.data.organize;
     organType = [organize.organType.toString()];
     legalArea = [organize.legalArea.toString()];
@@ -34,12 +53,17 @@ function RealnameOrgan(props) {
     licenseType = organize.licenseType;
     name = organize.name;
     regCode = organize.regCode;
-    organEndTime = organize.organEndTime;
+    organEndTime = !isEmptyObj(organize.organEndTime) && organize.organEndTime !== '0' ? moment(organize.organEndTime, 'YYYY-MM-DD').utcOffset(8) : organize.organEndTime;
     organCode = organize.organCode;
     legalName = organize.legalName;
     legalIdNo = organize.legalIdNo;
     agentName = organize.agentName;
     agentIdNo = organize.agentIdNo;
+    bankName = isEmptyObj(data.bank) ? '' : data.bank.split('-')[0];
+    bankSubName = isEmptyObj(data.bank) ? '' : data.bank.split('-')[1];
+    bankNum = data.bankNum;
+    address = isEmptyObj(organize.address) ? [] : getAddressValue(organize.address);
+    address1 = isEmptyObj(organize.address) ? '' : organize.address.split('-')[3];
   }
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
@@ -64,17 +88,12 @@ function RealnameOrgan(props) {
   };
   const { getFieldProps, getFieldError } = form;
   const onSubmit = (e) => {
-    // dispatch({
-    //   type: 'realnameOrgan/updateAccountInfo',
-    //   payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
-    // });
     form.validateFields({ force: true }, (error) => {
       if (error) {
         showMessage('校验失败', e);
       } else {
         dispatch({
           type: 'realnameOrgan/updateAccountInfo',
-          payload: '{"bankNum":"123456","bank":"test-test","organize":{"name":"test21","userType":"2","regCode":"","organType":"0","organEndTime":"0","organCode":"913301087458306077","legalArea":"0","legalName":"陈凯","legalIdNo":"430181199002040335","licenseType":"1","address":"中国-北京市-北京市-test11"}}',
         });
       }
     });
@@ -83,7 +102,7 @@ function RealnameOrgan(props) {
     if (/^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/.test(value)) {
       callback();
     } else {
-      callback(new Error('只能包括中文/英文字母'));
+      callback('只能包括中文/英文字母');
     }
   };
   const changeOrganType = (value) => {
@@ -121,6 +140,15 @@ function RealnameOrgan(props) {
   const onChangeOrganizeField = (fieldName, value) => {
     dispatch({
       type: 'realnameOrgan/onChangeOrganizeField',
+      payload: {
+        fieldName,
+        value,
+      },
+    });
+  };
+  const onChangeBankField = (fieldName, value) => {
+    dispatch({
+      type: 'realnameOrgan/onChangeBankField',
       payload: {
         fieldName,
         value,
@@ -525,21 +553,33 @@ function RealnameOrgan(props) {
         >
           {organInfoList()}
           <Picker
-            extra="请选择" data={district} title="选择地区" {...getFieldProps('district')}
+            extra="请选择" data={district} cols={2} title="选择地区" {...getFieldProps('address', {
+              initialValue: address,
+              onChange(value) {
+                onChangeOrganizeField('address', value);
+              },
+              rules: [
+                { required: true, message: '请选择地区' },
+              ],
+            })}
           >
             <List.Item arrow="horizontal">实际营业地址</List.Item>
           </Picker>
           <InputItem
             labelNumber={6}
-            {...getFieldProps('address', {
+            {...getFieldProps('address1', {
+              initialValue: address1,
+              onChange(value) {
+                onChangeOrganizeField('address1', value);
+              },
               rules: [
                 { required: true, message: '请输入详细地址' },
               ],
             })}
             clear
-            error={!!getFieldError('address')}
+            error={!!getFieldError('address1')}
             onErrorClick={(e) => {
-              showMessage(getFieldError('address').join('、'), e);
+              showMessage(getFieldError('address1').join('、'), e);
             }}
             placeholder="请输入详细地址"
           >
@@ -548,17 +588,20 @@ function RealnameOrgan(props) {
           <DatePicker
             disabled={false}
             mode="date"
-            title={
-              <AgreeItem defaultChecked={organEndTime === '0'} onChange={e => console.log('checkbox', e)}>
-                无期限
-              </AgreeItem>
-            }
+            // title={
+            //   <AgreeItem defaultChecked={organEndTime === '0'} onChange={e => console.log('checkbox', e)}>
+            //     无期限
+            //   </AgreeItem>
+            // }
             extra="请选择"
             {...getFieldProps('organEndTime', {
               initialValue: organEndTime === '0' ? null : organEndTime,
-              // onChange(value) {
-              //   onChangeOrganizeField('organEndTime', value);
-              // },
+              onChange(value) {
+                onChangeOrganizeField('organEndTime', moment(value).format('YYYY-MM-DD'));
+              },
+              rules: [
+                { required: true, message: '请选择营业期限' },
+              ],
             })}
           >
             <List.Item arrow="horizontal">营业期限</List.Item>
@@ -693,7 +736,15 @@ function RealnameOrgan(props) {
               mode="date"
               title="选择日期"
               extra="请选择"
-              {...getFieldProps('agentEndTime')}
+              {...getFieldProps('agentEndTime', {
+                // initialValue: agentEndTime,
+                // onChange(value) {
+                //   onChangeOrganizeField('agentEndTime', value);
+                // },
+                rules: [
+                  { required: true, message: '请选择身份证有效期' },
+                ],
+              })}
             >
               <List.Item arrow="horizontal">身份证有效期</List.Item>
             </DatePicker>
@@ -705,15 +756,19 @@ function RealnameOrgan(props) {
           <NoticeBar className="my-notice-bar" type="info">e签宝将给此对公账户汇入一笔1元以下资金；若公司名和对公账户开户名不一致，资金将汇入失败</NoticeBar>
           <InputItem
             labelNumber={6}
-            {...getFieldProps('bank', {
+            {...getFieldProps('bankName', {
+              initialValue: bankName,
+              onChange(value) {
+                onChangeBankField('bankName', value);
+              },
               rules: [
                 { required: true, message: '请输入开户银行名称' },
               ],
             })}
             clear
-            error={!!getFieldError('bank')}
+            error={!!getFieldError('bankName')}
             onErrorClick={(e) => {
-              showMessage(getFieldError('bank').join('、'), e);
+              showMessage(getFieldError('bankName').join('、'), e);
             }}
             placeholder="请输入开户银行名称"
           >
@@ -721,15 +776,19 @@ function RealnameOrgan(props) {
           </InputItem>
           <InputItem
             labelNumber={6}
-            {...getFieldProps('subbranch', {
+            {...getFieldProps('bankSubName', {
+              initialValue: bankSubName,
+              onChange(value) {
+                onChangeBankField('bankSubName', value);
+              },
               rules: [
                 { required: true, message: '请输入开户银行支行名称' },
               ],
             })}
             clear
-            error={!!getFieldError('subbranch')}
+            error={!!getFieldError('bankSubName')}
             onErrorClick={(e) => {
-              showMessage(getFieldError('subbranch').join('、'), e);
+              showMessage(getFieldError('bankSubName').join('、'), e);
             }}
             placeholder="请输入开户银行支行名称"
           >
@@ -738,6 +797,10 @@ function RealnameOrgan(props) {
           <InputItem
             labelNumber={6}
             {...getFieldProps('bankNum', {
+              initialValue: bankNum,
+              onChange(value) {
+                onChangeBankField('bankNum', value);
+              },
               rules: [
                 { required: true, message: '请输入开户银行账号' },
               ],
