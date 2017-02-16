@@ -125,8 +125,11 @@ export default {
       return { ...state, messageVisible, message };
     },
     setAccountInfo(state, { payload: data }) {
-      if (isEmptyObj(data.data.organize)) {
-        data.data.organize = {};
+      if (isEmptyObj(data.data.data.organize)) {
+        data.data.data.organize = {};
+      }
+      if (data.data.errCode === 0 && data.data.data.status !== 1 && data.data.data.status !== 3) {
+        window.location.href = `./realname-organ-result.html?status=${data.data.data.status}`;
       }
       return { ...state, accountInfo: data.data };
     },
@@ -134,7 +137,7 @@ export default {
       if (data.data.errCode === 0) {
         window.location.href = './realname-organ-pwd.html';
       }
-      return { ...state, updateAccountInfoResponse: data };
+      return { ...state, updateAccountInfoResponse: data, messageVisible: !data.data.success, message: data.data.msg };
     },
   },
   effects: {
@@ -143,9 +146,7 @@ export default {
       const param = _.pick(accountInfo.data, ['bank', 'bankNum', 'organize.name', 'organize.userType', 'organize.regCode', 'organize.organType',
         'organize.organEndTime', 'organize.organCode', 'organize.legalArea', 'organize.legalName', 'organize.legalIdNo', 'organize.licenseType', 'organize.address', 'organize.agentName',
         'organize.agentIdNo', 'organize.agentEndTime']);
-      console.log(JSON.stringify(param));
       const { data } = yield call(updateAccountInfo, JSON.stringify(param));
-      console.log('updateAccountInfo data: ', data);
       yield put({
         type: 'setUpdateAccountInfoResponse',
         payload: {
@@ -155,6 +156,7 @@ export default {
     },
     *getAccountInfo({ payload }, { call, put }) {
       const { data } = yield call(getAccountInfo);
+      alert(data.data.status);
       yield put({
         type: 'setAccountInfo',
         payload: {
@@ -165,7 +167,7 @@ export default {
   },
   subscriptions: {
     init({ dispatch }) {
-      if (window.location.href.indexOf('realname-organ.html') > -1) {
+      if (window.location.href.indexOf('realname-organ.html') > -1 || window.location.href.indexOf('realname-organ-pwd.html') > -1 || window.location.href.indexOf('realname-organ-photo.html') > -1) {
         dispatch({
           type: 'getAccountInfo',
         });

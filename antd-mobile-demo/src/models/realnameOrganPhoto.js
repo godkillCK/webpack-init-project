@@ -10,6 +10,8 @@ export default {
     legalPhotoConFile: [],
     agentPhotoProFile: [],
     agentPhotoConFile: [],
+    agentPhotoFile: [],
+    proxyPhotoFile: [],
     messageVisible: false,
     message: '',
     updateAccountInfoResponse: null,
@@ -19,6 +21,8 @@ export default {
     legalPhotoCon: '',
     agentPhotoPro: '',
     agentPhotoCon: '',
+    agentPhoto: '',
+    proxyPhoto: '',
   },
   reducers: {
     onFileChange(state, { payload }) {
@@ -35,7 +39,10 @@ export default {
       return { ...state, ...newState };
     },
     setUpdateAccountInfoResponse(state, { payload: data }) {
-      return { ...state, updateAccountInfoResponse: data };
+      if (data.data.errCode === 0) {
+        window.location.href = './realname-organ-result.html';
+      }
+      return { ...state, updateAccountInfoResponse: data, messageVisible: !data.data.success, message: data.data.msg };
     },
   },
   effects: {
@@ -58,14 +65,19 @@ export default {
           },
         });
       }
+      yield put({
+        type: 'showMessage',
+        payload: {
+          messageVisible: !data.success,
+          message: data.msg,
+        },
+      });
     },
     *updateAccountInfo({ payload }, { select, call, put }) {
       const realnameOrganPhotoState = yield select(state => state.realnameOrganPhoto);
-      const organize = _.pick(realnameOrganPhotoState, ['regPhoto', 'organPhoto', 'legalPhotoPro', 'legalPhotoCon', 'agentPhotoPro', 'agentPhotoCon']);
+      const organize = _.pick(realnameOrganPhotoState, ['regPhoto', 'organPhoto', 'legalPhotoPro', 'legalPhotoCon', 'agentPhotoPro', 'agentPhotoCon', 'agentPhoto', 'proxyPhoto']);
       const param = { organize };
-      console.log(JSON.stringify(param));
       const { data } = yield call(updateAccountInfo, JSON.stringify(param));
-      console.log('updateAccountInfo response: ', data);
       yield put({
         type: 'setUpdateAccountInfoResponse',
         payload: {

@@ -104,7 +104,7 @@ export default {
       if (data.data.errCode === 0) {
         window.location.href = './realname-organ-photo.html';
       }
-      return { ...state, updateAccountSafeInfoResponse: data };
+      return { ...state, updateAccountSafeInfoResponse: data, messageVisible: !data.data.success, message: data.data.msg };
     },
   },
   effects: {

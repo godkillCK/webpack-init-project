@@ -1,6 +1,13 @@
-@imgUrlOrganType0: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/c5ea84fe-d74a-4ee8-9baa-d48eb276eca1?Expires=1767576188&OSSAccessKeyId=FBzUaPMorqiiUAfb&Signature=mQk%2BTF36G2QsvSoazeclqGJDt54%3D');
-@imgUrlIdPro: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/7771d60c-7d87-4208-9088-5439aa9e4537?Expires=1767576189&OSSAccessKeyId=FBzUaPMorqiiUAfb&Signature=E1QAZZyAELQeY7pRmoBDI9cQ9qM%3D');
-@imgUrlIdCon: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/16deb8aa-62a9-4bb7-aaf1-3e325cb8295f?Expires=1767576189&OSSAccessKeyId=FBzUaPMorqiiUAfb&Signature=%2ByNNSEDEWINHZ7PA8awN5uwf6cE%3D');
+@regPhoto0: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/c5ea84fe-d74a-4ee8-9baa-d48eb276eca1');
+@regPhoto1: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/0fa96818-9b12-4d2d-9c52-9a6d14af97df');
+@regPhoto2: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/d008735b-77b9-4026-9724-aa75dfe08bba');
+@regPhoto3: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/9bd0e300-a665-4499-8d66-45f9e29ba829');
+@regPhoto4: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/6fd5c06b-2220-4c70-8765-8d1569e180f7');
+@organPhoto: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/img%2Fillustration%2Fcredentials%2Forgan-photo.jpg');
+@idPhotoPro: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/7771d60c-7d87-4208-9088-5439aa9e4537');
+@idPhotoCon: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/16deb8aa-62a9-4bb7-aaf1-3e325cb8295f');
+@agentPhoto: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/d2d901d3-571e-49c9-b56f-5e48bcfb0d77');
+@proxyPhoto: url('https://esignweb.oss-cn-hangzhou.aliyuncs.com/imgs/d1211388-ab8c-45f1-a11f-4ad925669a6c');
 
 .normal {
 }
@@ -29,9 +36,57 @@
       margin-bottom: 0;
     }
   }
-  .my-image-picker-organtype0 {
+  .my-image-picker-reg0 {
     .am-image-picker-list .am-image-picker-upload-btn {
-      background-image: @imgUrlOrganType0;
+      background-image: @regPhoto0;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-reg0 {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @regPhoto0;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-reg1 {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @regPhoto1;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-reg2 {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @regPhoto2;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-reg3 {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @regPhoto3;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-reg4 {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @regPhoto4;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-organ {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @organPhoto;
       background-size: contain;
       background-repeat: round;
     }
@@ -39,7 +94,7 @@
   }
   .my-image-picker-idPro {
     .am-image-picker-list .am-image-picker-upload-btn {
-      background-image: @imgUrlIdPro;
+      background-image: @idPhotoPro;
       background-size: contain;
       background-repeat: round;
     }
@@ -47,7 +102,23 @@
   }
   .my-image-picker-idCon {
     .am-image-picker-list .am-image-picker-upload-btn {
-      background-image: @imgUrlIdCon;
+      background-image: @idPhotoCon;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-agent {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @agentPhoto;
+      background-size: contain;
+      background-repeat: round;
+    }
+    .my-flexbox-align-middle;
+  }
+  .my-image-picker-proxy {
+    .am-image-picker-list .am-image-picker-upload-btn {
+      background-image: @proxyPhoto;
       background-size: contain;
       background-repeat: round;
     }
@@ -58,9 +129,5 @@
   }
   .my-flexbox-item-column {
     flex-direction: column;
-  }
-  .my-am-list .am-list-body {
-    // display: flex;
-    // justify-content: center;
   }
 }

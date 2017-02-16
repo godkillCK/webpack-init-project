@@ -1,14 +1,15 @@
 import request from '../utils/request';
 
+
 export async function getAccountInfo() {
-  return request('../service/ic/account/detail', {
+  return request('../../service/ic/account/detail', {
     method: 'GET',
     credentials: 'same-origin',
   });
 }
 
 export async function updateAccountInfo(values) {
-  return request('../service/ic/account/updateAccountInfo', {
+  return request('../../service/ic/account/updateAccountInfo', {
     method: 'POST',
     credentials: 'same-origin',
     body: values,
@@ -19,7 +20,7 @@ export async function updateAccountInfo(values) {
 }
 
 export async function updateAccountSafeInfo(values) {
-  return request('../service/ic/account/updateSafeInfo', {
+  return request('../../service/ic/account/updateSafeInfo', {
     method: 'POST',
     credentials: 'same-origin',
     body: values,
@@ -32,7 +33,7 @@ export async function updateAccountSafeInfo(values) {
 export async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);
-  return request('../service/ic/file/uploadFile', {
+  return request('../../service/ic/file/uploadFile', {
     method: 'POST',
     credentials: 'same-origin',
     body: formData,

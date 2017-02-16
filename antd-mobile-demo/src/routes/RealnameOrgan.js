@@ -25,6 +25,7 @@ function RealnameOrgan(props) {
   let legalIdNo = '';
   let agentName = '';
   let agentIdNo = '';
+  let agentEndTime = '0';
   let bankName = '';
   let bankSubName = '';
   let bankNum = '';
@@ -47,23 +48,55 @@ function RealnameOrgan(props) {
   if (!isEmptyObj(accountInfo) && !isEmptyObj(accountInfo.data) && !isEmptyObj(accountInfo.data.organize)) {
     const data = accountInfo.data;
     const organize = accountInfo.data.organize;
-    organType = [organize.organType.toString()];
-    legalArea = [organize.legalArea.toString()];
-    userType = organize.userType;
-    licenseType = organize.licenseType;
-    name = organize.name;
-    regCode = organize.regCode;
-    organEndTime = !isEmptyObj(organize.organEndTime) && organize.organEndTime !== '0' ? moment(organize.organEndTime, 'YYYY-MM-DD').utcOffset(8) : organize.organEndTime;
-    organCode = organize.organCode;
-    legalName = organize.legalName;
-    legalIdNo = organize.legalIdNo;
-    agentName = organize.agentName;
-    agentIdNo = organize.agentIdNo;
+    console.log('organize: ', organize);
+    if (Object.prototype.hasOwnProperty.call(organize, 'organType')) {
+      organType = [organize.organType.toString()];
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'legalArea')) {
+      legalArea = [organize.legalArea.toString()];
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'userType')) {
+      userType = organize.userType;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'licenseType')) {
+      licenseType = organize.licenseType;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'name')) {
+      name = organize.name;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'regCode')) {
+      regCode = organize.regCode;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'organEndTime')) {
+      organEndTime = !isEmptyObj(organize.organEndTime) && organize.organEndTime !== '0' ? moment(organize.organEndTime, 'YYYY-MM-DD').utcOffset(8) : organize.organEndTime;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'organCode')) {
+      organCode = organize.organCode;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'legalName')) {
+      legalName = organize.legalName;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'legalIdNo')) {
+      legalIdNo = organize.legalIdNo;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'agentName')) {
+      agentName = organize.agentName;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'agentIdNo')) {
+      agentIdNo = organize.agentIdNo;
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'agentEndTime')) {
+      agentEndTime = !isEmptyObj(organize.agentEndTime) && organize.agentEndTime !== '0' ? moment(organize.agentEndTime, 'YYYY-MM-DD').utcOffset(8) : organize.agentEndTime;
+    }
     bankName = isEmptyObj(data.bank) ? '' : data.bank.split('-')[0];
     bankSubName = isEmptyObj(data.bank) ? '' : data.bank.split('-')[1];
-    bankNum = data.bankNum;
-    address = isEmptyObj(organize.address) ? [] : getAddressValue(organize.address);
-    address1 = isEmptyObj(organize.address) ? '' : organize.address.split('-')[3];
+    bankNum = isEmptyObj(data.bankNum) ? '' : data.bankNum;
+    if (Object.prototype.hasOwnProperty.call(organize, 'address')) {
+      address = isEmptyObj(organize.address) ? [] : getAddressValue(organize.address);
+    }
+    if (Object.prototype.hasOwnProperty.call(organize, 'address')) {
+      address1 = isEmptyObj(organize.address) ? '' : organize.address.split('-')[3];
+    }
   }
   const showMessage = (m, e) => {
     // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
@@ -159,7 +192,7 @@ function RealnameOrgan(props) {
   switch (organType[0]) {
     case '0':
       organInfoList = () => (
-        <div>
+        <div className="my-input-item">
           <Flex className={styles.form_flex_border}>
             <Flex.Item style={{ flex: 6 }}>证件类型</Flex.Item>
             <Flex.Item style={{ flex: 12 }}>
@@ -220,7 +253,7 @@ function RealnameOrgan(props) {
       break;
     case '1':
       organInfoList = () => (
-        <div>
+        <div className="my-input-item">
           <InputItem
             labelNumber={6}
             {...getFieldProps('name1', {
@@ -265,7 +298,7 @@ function RealnameOrgan(props) {
       break;
     case '2':
       organInfoList = () => (
-        <div>
+        <div className="my-input-item">
           <InputItem
             labelNumber={6}
             {...getFieldProps('name2', {
@@ -310,7 +343,7 @@ function RealnameOrgan(props) {
       break;
     case '3':
       organInfoList = () => (
-        <div>
+        <div className="my-input-item">
           <InputItem
             labelNumber={6}
             {...getFieldProps('name3', {
@@ -355,7 +388,7 @@ function RealnameOrgan(props) {
       break;
     case '4':
       organInfoList = () => (
-        <div>
+        <div className="my-input-item">
           <InputItem
             labelNumber={6}
             {...getFieldProps('name4', {
@@ -737,10 +770,10 @@ function RealnameOrgan(props) {
               title="选择日期"
               extra="请选择"
               {...getFieldProps('agentEndTime', {
-                // initialValue: agentEndTime,
-                // onChange(value) {
-                //   onChangeOrganizeField('agentEndTime', value);
-                // },
+                initialValue: agentEndTime === '0' ? null : agentEndTime,
+                onChange(value) {
+                  onChangeOrganizeField('agentEndTime', moment(value).format('YYYY-MM-DD'));
+                },
                 rules: [
                   { required: true, message: '请选择身份证有效期' },
                 ],

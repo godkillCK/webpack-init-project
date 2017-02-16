@@ -9,6 +9,7 @@ const app = dva();
 app.use(createLoading());
 
 // 2. Model
+app.model(require('../models/realnameOrgan'));
 app.model(require('../models/realnameOrganPhoto'));
 
 // 3. View
