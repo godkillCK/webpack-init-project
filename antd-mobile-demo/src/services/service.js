@@ -30,6 +30,17 @@ export async function updateAccountSafeInfo(values) {
   });
 }
 
+export async function checkPrice(values) {
+  return request('../../service/ic/account/checkPrice', {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: values,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
 export async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);

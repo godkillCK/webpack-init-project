@@ -1,21 +1,15 @@
 import React from 'react';
 import { connect } from 'dva/mobile';
-import { Button, InputItem, Result, NavBar, ActivityIndicator } from 'antd-mobile';
-// import { moment } from 'moment';
-// import 'moment/locale/zh-cn';
+import { Button, InputItem, Result, NavBar, Modal, ActivityIndicator } from 'antd-mobile';
+import { createForm } from 'rc-form';
 import styles from './mixins.less';
 
-// const Item = List.Item;
-// const zhNow = moment().locale('zh-cn').utcOffset(8);
-
 function RealnameOrganResult(props) {
-  const { loading, dispatch, status, rejReason, message } = props;
+  const { loading, dispatch, status, form, rejReason, messageVisible, message } = props;
   const showMessage = (m, e) => {
-    // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
-    // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
-    e.preventDefault(); // 修复 Android 上点击穿透
+    e.preventDefault();
     dispatch({
-      type: 'realnameOrganPwd/showMessage',
+      type: 'realnameOrganResult/showMessage',
       payload: {
         messageVisible: true,
         message: m,
@@ -24,32 +18,55 @@ function RealnameOrganResult(props) {
   };
   const onClose = () => {
     dispatch({
-      type: 'realnameOrganPwd/showMessage',
+      type: 'realnameOrganResult/showMessage',
       payload: {
         messageVisible: false,
         message,
       },
     });
   };
+  const onChangePrice = (value) => {
+    dispatch({
+      type: 'realnameOrganResult/setPrice',
+      payload: {
+        price: value,
+      },
+    });
+  };
+  const { getFieldProps, getFieldError } = form;
   const reAuth = () => {
     window.location.href = 'realname-organ.html';
   };
   const valiExtra = () => {
     return (
-      111
+      <Button type="primary" size="small" inline>确认</Button>
     );
   };
   const onSubmit = (e) => {
-    debugger;
+    form.validateFields({ force: true }, (error) => {
+      if (error) {
+        showMessage('校验失败', e);
+      } else {
+        dispatch({
+          type: 'realnameOrganResult/checkPrice',
+        });
+      }
+    });
   };
   let img;
   let title;
   let msg;
-  switch (status) {
+  switch (status !== null ? status.toString() : status) {
     case '2':
       img = 'https://zos.alipayobjects.com/rmsportal/gIGluyutXOpJmqx.png';
       title = '等待审核';
-      msg = () => ('已提交，等待后台审核');
+      msg = () => {
+        return (
+          <div>
+            已提交，等待后台审核 <a href="../home.html" className={styles.jump_link}>返回首页</a>
+          </div>
+        );
+      };
       break;
     case '3':
       img = 'https://zos.alipayobjects.com/rmsportal/LUIUWjyMDWctQTf.png';
@@ -58,7 +75,7 @@ function RealnameOrganResult(props) {
         return (
           <div>
             <div style={{ marginBottom: '0.2rem' }}>{`失败原因：${rejReason}`}</div>
-            <Button type="primary" onClick={reAuth} inline>重新认证</Button>
+            <Button type="primary" onClick={reAuth} size="small" inline>重新认证</Button>
           </div>
         );
       };
@@ -74,7 +91,27 @@ function RealnameOrganResult(props) {
       msg = () => {
         return (
           <div>
-            <input type="text" />
+            <form>
+              <InputItem
+                className="my-input-extra"
+                placeholder="请输入对公银行账户收到的金额"
+                extra={valiExtra()}
+                onExtraClick={onSubmit}
+                {...getFieldProps('checkPrice', {
+                  onChange(value) {
+                    onChangePrice(value);
+                  },
+                  rules: [
+                    { required: true, message: '请输入验证金额' },
+                  ],
+                })}
+                clear
+                error={!!getFieldError('checkPrice')}
+                onErrorClick={(e) => {
+                  showMessage(getFieldError('checkPrice').join('、'), e);
+                }}
+              />
+            </form>
           </div>
         );
       };
@@ -82,28 +119,21 @@ function RealnameOrganResult(props) {
     case '9':
       img = 'https://zos.alipayobjects.com/rmsportal/hbTlcWTgMzkBEiU.png';
       title = '实名成功';
-      msg = () => ('您现在可享有相关的服务');
-      break;
-    default:
-      // img = 'https://zos.alipayobjects.com/rmsportal/NRzOqylcxEstLGf.png';
-      // title = '未实名';
-      // msg = () => {
-      //   return (
-      //     <div>
-      //       请<a href="realname-organ.html" className={styles.jump_link}>点这里</a>完成实名认证
-      //     </div>
-      //   );
-      // };
-      img = 'https://zos.alipayobjects.com/rmsportal/gIGluyutXOpJmqx.png';
-      title = '打款金额验证';
       msg = () => {
         return (
           <div>
-            <InputItem
-              placeholder="请输入"
-              extra={valiExtra()}
-              onExtraClick={onSubmit}
-            />
+            您现在可享有相关的服务 <a href="../home.html" className={styles.jump_link}>返回首页</a>
+          </div>
+        );
+      };
+      break;
+    default:
+      img = 'https://zos.alipayobjects.com/rmsportal/NRzOqylcxEstLGf.png';
+      title = '未实名';
+      msg = () => {
+        return (
+          <div>
+            请<a href="realname-organ.html" className={styles.jump_link}>点这里</a>完成实名认证
           </div>
         );
       };
@@ -119,12 +149,24 @@ function RealnameOrganResult(props) {
         message={msg()}
       />
 
-      {/* <ActivityIndicator
+      <Modal
+        title=""
+        transparent
+        maskClosable={false}
+        visible={messageVisible}
+        closable={false}
+        onClose={onClose}
+        footer={[{ text: '确定', onPress: () => { onClose(); } }]}
+      >
+        {message}
+      </Modal>
+
+      <ActivityIndicator
         toast
         color="white"
         size="large"
         animating={loading}
-      /> */}
+      />
     </div>
   );
 }
@@ -133,4 +175,4 @@ function mapStateToProps(state) {
   return { ...state.realnameOrganResult, loading: state.loading.global };
 }
 
-export default connect(mapStateToProps)(RealnameOrganResult);
+export default connect(mapStateToProps)(createForm()(RealnameOrganResult));

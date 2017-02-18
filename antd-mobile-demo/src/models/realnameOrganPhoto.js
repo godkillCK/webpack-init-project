@@ -49,7 +49,6 @@ export default {
     *uploadFile({ payload }, { call, put }) {
       const { photoType, files } = payload;
       const { data } = yield call(uploadFile, files[0].file);
-      console.log('uploadFile response: ', data);
       if (data.errCode === 0) {
         const newPayload = {};
         newPayload[`${photoType}File`] = files;

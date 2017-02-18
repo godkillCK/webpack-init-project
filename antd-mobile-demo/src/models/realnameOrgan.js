@@ -50,10 +50,6 @@ export default {
         label: '外籍',
       },
     ],
-    // organType: ['0'],
-    // legalArea: ['0'],
-    // userType: 1,
-    // licenseType: 0,
     messageVisible: false,
     message: '',
     updateAccountInfoResponse: null,
@@ -92,7 +88,7 @@ export default {
         let address = '';
         for (const i in district) {
           if (district[i].value === value[0]) {
-            address = `中国-${district[i].label}-${oldAddress.split('-')[2]}-${oldAddress.split('-')[3]}`;
+            address = `中国-${district[i].label}-${oldAddress.split('-')[2]}-${oldAddress.split('-')[3] === undefined || oldAddress.split('-')[3] == null ? '' : oldAddress.split('-')[3]}`;
             for (const j in district[i].children) {
               if (district[i].children[j].value === value[1]) {
                 address = `中国-${address.split('-')[1]}-${district[i].children[j].label}-${address.split('-')[3]}`;
@@ -113,7 +109,7 @@ export default {
       const accountInfo = { ...state.accountInfo };
       const oldBank = isEmptyObj(accountInfo.data.bank) ? '' : accountInfo.data.bank;
       if (fieldName === 'bankName') {
-        accountInfo.data.bank = `${value}-${oldBank.split('-')[1]}`;
+        accountInfo.data.bank = `${value}-${oldBank.split('-')[1] === undefined || oldBank.split('-')[1] == null ? '' : oldBank.split('-')[1]}`;
       } else if (fieldName === 'bankSubName') {
         accountInfo.data.bank = `${oldBank.split('-')[0]}-${value}`;
       }
@@ -125,11 +121,20 @@ export default {
       return { ...state, messageVisible, message };
     },
     setAccountInfo(state, { payload: data }) {
+      if (isEmptyObj(data)) {
+        data = {};
+      }
+      if (isEmptyObj(data.data)) {
+        data.data = {};
+      }
+      if (isEmptyObj(data.data.data)) {
+        data.data.data = {};
+      }
       if (isEmptyObj(data.data.data.organize)) {
         data.data.data.organize = {};
       }
       if (data.data.errCode === 0 && data.data.data.status !== 1 && data.data.data.status !== 3) {
-        window.location.href = `./realname-organ-result.html?status=${data.data.data.status}`;
+        window.location.href = `./realname-organ-result.html?status=${data.data.data.status}&rejReason=${data.data.data.rejReason}`;
       }
       return { ...state, accountInfo: data.data };
     },
@@ -156,7 +161,6 @@ export default {
     },
     *getAccountInfo({ payload }, { call, put }) {
       const { data } = yield call(getAccountInfo);
-      alert(data.data.status);
       yield put({
         type: 'setAccountInfo',
         payload: {

@@ -3,19 +3,12 @@ import md5 from 'md5';
 import { connect } from 'dva/mobile';
 import { NavBar, Picker, List, InputItem, Button, Modal, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-// import { moment } from 'moment';
-// import 'moment/locale/zh-cn';
 import styles from './mixins.less';
-
-// const Item = List.Item;
-// const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 function RealnameOrganPwd(props) {
   const { loading, dispatch, pwdRequestList, pwdRequest, pwdRequest2List, pwdRequest2, form, messageVisible, message } = props;
   const showMessage = (m, e) => {
-    // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
-    // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
-    e.preventDefault(); // 修复 Android 上点击穿透
+    e.preventDefault();
     dispatch({
       type: 'realnameOrganPwd/showMessage',
       payload: {
@@ -104,6 +97,8 @@ function RealnameOrganPwd(props) {
               },
               rules: [
                 { required: true, message: '请输入签署密码' },
+                { min: 6, message: '需6至15位的任意字符' },
+                { max: 15, message: '需6至15位的任意字符' },
                 { validator: checkConfirm },
               ],
             })}
@@ -122,6 +117,8 @@ function RealnameOrganPwd(props) {
             {...getFieldProps('confirm', {
               rules: [
                 { required: true, message: '请输入确认密码' },
+                { min: 6, message: '需6至15位的任意字符' },
+                { max: 15, message: '需6至15位的任意字符' },
                 { validator: checkPassword },
               ],
             })}
@@ -136,6 +133,7 @@ function RealnameOrganPwd(props) {
           </InputItem>
         </List>
         <List
+          style={{ marginBottom: '1rem' }}
           renderHeader={() => '安全保护问题'}
           // renderFooter={() => getFieldError('name') && getFieldError('name').join(',')}
         >
@@ -202,6 +200,7 @@ function RealnameOrganPwd(props) {
         transparent
         maskClosable={false}
         visible={messageVisible}
+        closable={false}
         onClose={onClose}
         footer={[{ text: '确定', onPress: () => { onClose(); } }]}
       >

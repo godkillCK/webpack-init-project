@@ -4,23 +4,19 @@ import { connect } from 'dva/mobile';
 import { NavBar, List, Button, Modal, ActivityIndicator, ImagePicker, Flex } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { isEmptyObj } from '../utils/commonutil';
-// import { moment } from 'moment';
-// import 'moment/locale/zh-cn';
 import styles from './mixins.less';
 
-// const Item = List.Item;
-// const zhNow = moment().locale('zh-cn').utcOffset(8);
-
 function RealnameOrganPhoto(props) {
-  const { loading, dispatch, organType, licenseType, userType, regPhotoFile, organPhotoFile, legalPhotoProFile, legalPhotoConFile, agentPhotoProFile, agentPhotoConFile, agentPhotoFile, proxyPhotoFile, form, messageVisible, message } = props;
+  const { loading, dispatch, organType, licenseType, userType,
+    regPhotoFile, organPhotoFile, legalPhotoProFile, legalPhotoConFile, agentPhotoProFile, agentPhotoConFile, agentPhotoFile, proxyPhotoFile,
+    regPhoto, organPhoto, legalPhotoPro, legalPhotoCon, agentPhotoPro, agentPhotoCon, agentPhoto, proxyPhoto,
+    form, messageVisible, message } = props;
   const btnCls = classnames({
     btn: true,
     'my-bottom-btn': userType !== 1,
   });
   const showMessage = (m, e) => {
-    // 现象：如果弹出的弹框上的 x 按钮的位置、和手指点击 button 时所在的位置「重叠」起来，
-    // 会触发 x 按钮的点击事件而导致关闭弹框 (注：弹框上的取消/确定等按钮遇到同样情况也会如此)
-    e.preventDefault(); // 修复 Android 上点击穿透
+    e.preventDefault();
     dispatch({
       type: 'realnameOrganPhoto/showMessage',
       payload: {
@@ -38,10 +34,27 @@ function RealnameOrganPhoto(props) {
       },
     });
   };
+  const validatePhoto = () => {
+    if (organType === 0 && licenseType === 1) {
+      if (isEmptyObj(regPhoto)) {
+        return true;
+      }
+    } else if (isEmptyObj(regPhoto) || isEmptyObj(organPhoto)) {
+      return true;
+    }
+    if (userType === 1) {
+      if (isEmptyObj(legalPhotoPro) || isEmptyObj(legalPhotoCon) || isEmptyObj(agentPhotoPro) || isEmptyObj(agentPhotoCon) || isEmptyObj(agentPhoto) || isEmptyObj(proxyPhoto)) {
+        return true;
+      }
+    } else if (isEmptyObj(legalPhotoPro) || isEmptyObj(legalPhotoCon)) {
+      return true;
+    }
+    return false;
+  };
   const onSubmit = (e) => {
-    form.validateFields({ force: true }, (error) => {
-      if (error) {
-        showMessage('校验失败', e);
+    form.validateFields({ force: true }, () => {
+      if (validatePhoto()) {
+        showMessage('请先上传证件照', e);
       } else {
         dispatch({
           type: 'realnameOrganPhoto/updateAccountInfo',
@@ -90,7 +103,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-reg0"
                     files={regPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'regPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => (console.log(index, fs))}
                     selectable={regPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -107,7 +120,7 @@ function RealnameOrganPhoto(props) {
                       className="my-image-picker-organ"
                       files={organPhotoFile}
                       onChange={(files, type, index) => { onFileChange(files, type, index, 'organPhoto'); }}
-                      onImageClick={(index, fs) => console.log(index, fs)}
+                      // onImageClick={(index, fs) => console.log(index, fs)}
                       selectable={organPhotoFile.length < 1}
                     />
                   </Flex.Item>
@@ -137,7 +150,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-reg1"
                     files={regPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'regPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={regPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -153,7 +166,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-organ"
                     files={organPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'organPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={organPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -181,7 +194,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-reg2"
                     files={regPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'regPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={regPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -197,7 +210,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-organ"
                     files={organPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'organPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={organPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -225,7 +238,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-reg3"
                     files={regPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'regPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={regPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -241,7 +254,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-organ"
                     files={organPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'organPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={organPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -269,7 +282,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-reg4"
                     files={regPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'regPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={regPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -285,7 +298,7 @@ function RealnameOrganPhoto(props) {
                     className="my-image-picker-organ"
                     files={organPhotoFile}
                     onChange={(files, type, index) => { onFileChange(files, type, index, 'organPhoto'); }}
-                    onImageClick={(index, fs) => console.log(index, fs)}
+                    // onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={organPhotoFile.length < 1}
                   />
                 </Flex.Item>
@@ -323,7 +336,7 @@ function RealnameOrganPhoto(props) {
                   className="my-image-picker-idPro"
                   files={legalPhotoProFile}
                   onChange={(files, type, index) => { onFileChange(files, type, index, 'legalPhotoPro'); }}
-                  onImageClick={(index, fs) => console.log(index, fs)}
+                  // onImageClick={(index, fs) => console.log(index, fs)}
                   selectable={legalPhotoProFile.length < 1}
                 />
               </Flex.Item>
@@ -339,7 +352,7 @@ function RealnameOrganPhoto(props) {
                   className="my-image-picker-idCon"
                   files={legalPhotoConFile}
                   onChange={(files, type, index) => { onFileChange(files, type, index, 'legalPhotoCon'); }}
-                  onImageClick={(index, fs) => console.log(index, fs)}
+                  // onImageClick={(index, fs) => console.log(index, fs)}
                   selectable={legalPhotoConFile.length < 1}
                 />
               </Flex.Item>
@@ -363,7 +376,7 @@ function RealnameOrganPhoto(props) {
                       className="my-image-picker-idPro"
                       files={agentPhotoProFile}
                       onChange={(files, type, index) => { onFileChange(files, type, index, 'agentPhotoPro'); }}
-                      onImageClick={(index, fs) => console.log(index, fs)}
+                      // onImageClick={(index, fs) => console.log(index, fs)}
                       selectable={agentPhotoProFile.length < 1}
                     />
                   </Flex.Item>
@@ -379,7 +392,7 @@ function RealnameOrganPhoto(props) {
                       className="my-image-picker-idCon"
                       files={agentPhotoConFile}
                       onChange={(files, type, index) => { onFileChange(files, type, index, 'agentPhotoCon'); }}
-                      onImageClick={(index, fs) => console.log(index, fs)}
+                      // onImageClick={(index, fs) => console.log(index, fs)}
                       selectable={agentPhotoConFile.length < 1}
                     />
                   </Flex.Item>
@@ -397,7 +410,7 @@ function RealnameOrganPhoto(props) {
                       className="my-image-picker-agent"
                       files={agentPhotoFile}
                       onChange={(files, type, index) => { onFileChange(files, type, index, 'agentPhoto'); }}
-                      onImageClick={(index, fs) => console.log(index, fs)}
+                      // onImageClick={(index, fs) => console.log(index, fs)}
                       selectable={agentPhotoFile.length < 1}
                     />
                   </Flex.Item>
@@ -420,7 +433,7 @@ function RealnameOrganPhoto(props) {
                       className="my-image-picker-proxy"
                       files={proxyPhotoFile}
                       onChange={(files, type, index) => { onFileChange(files, type, index, 'proxyPhoto'); }}
-                      onImageClick={(index, fs) => console.log(index, fs)}
+                      // onImageClick={(index, fs) => console.log(index, fs)}
                       selectable={proxyPhotoFile.length < 1}
                     />
                   </Flex.Item>
@@ -442,6 +455,7 @@ function RealnameOrganPhoto(props) {
         transparent
         maskClosable={false}
         visible={messageVisible}
+        closable={false}
         onClose={onClose}
         footer={[{ text: '确定', onPress: () => { onClose(); } }]}
       >
@@ -460,7 +474,6 @@ function RealnameOrganPhoto(props) {
 
 function mapStateToProps(state) {
   const { accountInfo } = state.realnameOrgan;
-  console.log(accountInfo);
   let organType = 0;// 不同企业类型 证件照不一样
   let licenseType = 1;// 为普通企业时，0：普通营业执照，1：三证合一
   let userType = 2;// 1：需要传代理人照，2：只用传法人照

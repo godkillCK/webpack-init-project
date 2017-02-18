@@ -4,12 +4,9 @@ import { NavBar, Picker, List, InputItem, NoticeBar, Button, Modal, DatePicker, 
 import { createForm } from 'rc-form';
 import moment from 'moment';
 import { isEmptyObj } from '../utils/commonutil';
+import { checkSocialCredit, checkOrganCode, checkIdcardCN18 } from '../utils/validator';
 import district from '../models/district';
 import styles from './mixins.less';
-
-// const Item = List.Item;
-// const zhNow = moment().locale('zh-cn').utcOffset(8);
-// const AgreeItem = Checkbox.AgreeItem;
 
 function RealnameOrgan(props) {
   const { loading, dispatch, organTypeList, legalAreaList, accountInfo, form, messageVisible, message } = props;
@@ -48,7 +45,6 @@ function RealnameOrgan(props) {
   if (!isEmptyObj(accountInfo) && !isEmptyObj(accountInfo.data) && !isEmptyObj(accountInfo.data.organize)) {
     const data = accountInfo.data;
     const organize = accountInfo.data.organize;
-    console.log('organize: ', organize);
     if (Object.prototype.hasOwnProperty.call(organize, 'organType')) {
       organType = [organize.organType.toString()];
     }
@@ -131,13 +127,6 @@ function RealnameOrgan(props) {
       }
     });
   };
-  const validateName = (rule, value, callback) => {
-    if (/^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/.test(value)) {
-      callback();
-    } else {
-      callback('只能包括中文/英文字母');
-    }
-  };
   const changeOrganType = (value) => {
     dispatch({
       type: 'realnameOrgan/changeOrganType',
@@ -216,7 +205,9 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入企业名称' },
-                { validator: validateName },
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -236,7 +227,11 @@ function RealnameOrgan(props) {
                 onChange(value) {
                   onChangeOrganizeField('regCode', value);
                 },
-                rules: [],
+                rules: [
+                  { min: 4, message: '长度介于4和40之间' },
+                  { max: 40, message: '长度介于4和40之间' },
+                  { pattern: /^[0-9A-Z]*$/, message: '请输入正确格式' },
+                ],
               })}
               clear
               error={!!getFieldError('regCode')}
@@ -263,7 +258,9 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入社会团体名称' },
-                { validator: validateName },
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -282,7 +279,11 @@ function RealnameOrgan(props) {
               onChange(value) {
                 onChangeOrganizeField('regCode', value);
               },
-              rules: [],
+              rules: [
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[0-9A-Z]*$/, message: '请输入正确格式' },
+              ],
             })}
             clear
             error={!!getFieldError('regCode1')}
@@ -308,7 +309,9 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入事业单位名称' },
-                { validator: validateName },
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -327,7 +330,11 @@ function RealnameOrgan(props) {
               onChange(value) {
                 onChangeOrganizeField('regCode', value);
               },
-              rules: [],
+              rules: [
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[0-9A-Z]*$/, message: '请输入正确格式' },
+              ],
             })}
             clear
             error={!!getFieldError('regCode2')}
@@ -353,7 +360,9 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入民办非企业单位信息' },
-                { validator: validateName },
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -372,7 +381,11 @@ function RealnameOrgan(props) {
               onChange(value) {
                 onChangeOrganizeField('regCode', value);
               },
-              rules: [],
+              rules: [
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[0-9A-Z]*$/, message: '请输入正确格式' },
+              ],
             })}
             clear
             error={!!getFieldError('regCode3')}
@@ -398,7 +411,9 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入单位名称' },
-                { validator: validateName },
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -417,7 +432,11 @@ function RealnameOrgan(props) {
               onChange(value) {
                 onChangeOrganizeField('regCode', value);
               },
-              rules: [],
+              rules: [
+                { min: 4, message: '长度介于4和40之间' },
+                { max: 40, message: '长度介于4和40之间' },
+                { pattern: /^[0-9A-Z]*$/, message: '请输入正确格式' },
+              ],
             })}
             clear
             error={!!getFieldError('regCode4')}
@@ -447,6 +466,7 @@ function RealnameOrgan(props) {
             },
             rules: [
               { required: true, message: '请输入身份证号' },
+              { validator: checkIdcardCN18 },
             ],
           })}
           clear
@@ -471,6 +491,7 @@ function RealnameOrgan(props) {
             },
             rules: [
               { required: true, message: '请输入港澳居民来往内地通行证' },
+              { pattern: /^[Hh]{1}([0-9]{10}|[0-9]{8})$/, message: '请输入正确格式' },
             ],
           })}
           clear
@@ -495,6 +516,7 @@ function RealnameOrgan(props) {
             },
             rules: [
               { required: true, message: '请输入港澳居民来往内地通行证' },
+              { pattern: /^[Mm]{1}([0-9]{10}|[0-9]{8})$/, message: '请输入正确格式' },
             ],
           })}
           clear
@@ -519,6 +541,7 @@ function RealnameOrgan(props) {
             },
             rules: [
               { required: true, message: '请输入台胞证' },
+              { pattern: /^(\d{8}|\d{10})$/, message: '请输入正确格式' },
             ],
           })}
           clear
@@ -543,6 +566,7 @@ function RealnameOrgan(props) {
             },
             rules: [
               { required: true, message: '请输入护照号' },
+              { pattern: /^[A-Za-z0-9]+$/, message: '请输入正确格式' },
             ],
           })}
           clear
@@ -607,6 +631,7 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入详细地址' },
+                // TODO
               ],
             })}
             clear
@@ -649,6 +674,7 @@ function RealnameOrgan(props) {
                 },
                 rules: [
                   { required: true, message: '请输入社会信用代码' },
+                  { validator: checkSocialCredit },
                 ],
               })}
               clear
@@ -669,6 +695,7 @@ function RealnameOrgan(props) {
                 },
                 rules: [
                   { required: true, message: '请输入组织机构代码' },
+                  { validator: checkOrganCode },
                 ],
               })}
               clear
@@ -708,6 +735,7 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入法人姓名' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -734,6 +762,7 @@ function RealnameOrgan(props) {
                 },
                 rules: [
                   { required: true, message: '请输入代理人姓名' },
+                  { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
                 ],
               })}
               clear
@@ -754,6 +783,7 @@ function RealnameOrgan(props) {
                 },
                 rules: [
                   { required: true, message: '请输入身份证号' },
+                  { validator: checkIdcardCN18 },
                 ],
               })}
               clear
@@ -784,6 +814,7 @@ function RealnameOrgan(props) {
           </List> :
           null }
         <List
+          style={{ marginBottom: '1rem' }}
           renderHeader={() => '银行账户信息'}
         >
           <NoticeBar className="my-notice-bar" type="info">e签宝将给此对公账户汇入一笔1元以下资金；若公司名和对公账户开户名不一致，资金将汇入失败</NoticeBar>
@@ -796,6 +827,7 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入开户银行名称' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -816,6 +848,7 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入开户银行支行名称' },
+                { pattern: /^[a-zA-z\u0391-\uFFE5\(\)][^\[\]]+$/, message: '只能包括中文/英文字母' },
               ],
             })}
             clear
@@ -836,6 +869,7 @@ function RealnameOrgan(props) {
               },
               rules: [
                 { required: true, message: '请输入开户银行账号' },
+                { pattern: /^[0-9]*$/, message: '只能是数字' },
               ],
             })}
             clear
@@ -848,7 +882,7 @@ function RealnameOrgan(props) {
             开户银行账号
           </InputItem>
         </List>
-        <Button className="btn" style={{ marginTop: 30 }} type="primary" onClick={onSubmit}>下一步</Button>
+        <Button className="btn my-bottom-btn" style={{ marginTop: 30 }} type="primary" onClick={onSubmit}>下一步</Button>
       </form>
 
       <Modal
@@ -856,6 +890,7 @@ function RealnameOrgan(props) {
         transparent
         maskClosable={false}
         visible={messageVisible}
+        closable={false}
         onClose={onClose}
         footer={[{ text: '确定', onPress: () => { onClose(); } }]}
       >
